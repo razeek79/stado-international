@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Oswald:wght@400;700&display=swap');
 
 :root {
-  --primary-color: #D4AF37; /* Gold */
-  --primary-glow: rgba(212, 175, 55, 0.3);
-  --primary-glow-strong: rgba(212, 175, 55, 0.6);
+  --primary-color: #4DA6FF; /* Light Blue */
+  --primary-glow: rgba(77, 166, 255, 0.3);
+  --primary-glow-strong: rgba(77, 166, 255, 0.6);
   --bg-black: #050505;
   --bg-card: linear-gradient(145deg, #111111, #1a1a1a);
   --text-white: #ffffff;
