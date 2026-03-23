@@ -127,7 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (typeof supabaseUrl === 'undefined' || typeof supabaseKey === 'undefined') {
                     throw new Error("config.js is missing or keys are not defined.");
                 }
-                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                if (!window.supabaseClient) {
+                    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+                }
+                const supabase = window.supabaseClient;
 
                 // Get IP
                 const userAgent = navigator.userAgent;

@@ -1,0 +1,21 @@
+{
+  "name": "STADO Staff Portal",
+  "short_name": "STADO Portal",
+  "description": "Internal management portal for STADO International.",
+  "start_url": "/portal.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#D4AF37",
+  "icons": [
+    {
+      "src": "images/stado_emblem_compressed.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/stado_emblem_compressed.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

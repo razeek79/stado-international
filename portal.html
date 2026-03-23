@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STADO Portal</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#D4AF37">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background: var(--bg-black);">
+
+    <div id="loginScreen" class="portal-login-wrapper">
+        <div class="portal-login-card">
+            <img src="images/stado_emblem_compressed.png" alt="Stado Logo" style="width: 80px; margin-bottom: 20px; border-radius: 50%;">
+            <h2 style="margin-bottom: 20px; font-size: 1.8rem;">Staff Portal</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="staffEmail" class="form-control" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="staffPassword" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+            <p id="loginError" style="color: red; margin-top: 15px; display: none;"></p>
+        </div>
+    </div>
+
+    <div id="dashboardScreen" class="portal-dashboard">
+        <header style="position: fixed; width: 100%; top: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 15px 5%; border-bottom: 1px solid var(--primary-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="logo-container">
+                    <img src="images/stado_emblem_compressed.png" alt="Stado Logo" style="width: 40px; border-radius: 50%;">
+                    <span class="logo-text">PORTAL</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-outline" style="padding: 8px 15px; font-size: 0.9rem;">Logout</button>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="portal-header">
+                <h2>Wellness Applications</h2>
+                <button id="refreshBtn" class="btn" style="padding: 10px 20px;">↻ Refresh Data</button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Organization</th>
+                            <th>Contact Person</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationsTableBody">
+                        <tr><td colspan="6" class="text-center">Loading applications...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="portal.js"></script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Registered'))
+                .catch(err => console.error('Service Worker Error', err));
+        }
+    </script>
+</body>
+</html>
