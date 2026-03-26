@@ -127,9 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (typeof supabaseUrl === 'undefined' || typeof supabaseKey === 'undefined') {
                     throw new Error("config.js is missing or keys are not defined.");
                 }
-                if (!window.supabaseClient) {
-                    window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-                }
                 const supabase = window.supabaseClient;
 
                 // Get IP
@@ -254,7 +251,7 @@ Date: ${formData.signatory_date}
 _Submitted via STADO Wellness Application System_`;
 
                 const encodedMessage = encodeURIComponent(waMessage);
-                const waUrl = `https://wa.me/919496952179?text=${encodedMessage}`;
+                const waUrl = `https://wa.me/919496336791?text=${encodedMessage}`;
 
                 // UI Updates & Redirect
                 loadingOverlay.style.display = 'none';

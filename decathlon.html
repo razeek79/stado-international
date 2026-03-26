@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stado International | Decathlon Admission</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="images/stado_emblem_compressed.jpg" alt="Stado Logo" onerror="this.src='images/stado_emblem_compressed.png'">
+                <span class="logo-text">STADO</span>
+            </div>
+            <div class="hamburger" id="hamburger">☰</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="programs.html">Programs</a></li>
+                <li><a href="stado-wellness.html">Corporate Wellness</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container text-center reveal" style="padding-bottom: 20px;">
+            <h1 style="font-size: 3rem; margin-bottom: 10px;">Get Admission</h1>
+            <p style="color: var(--primary-color); font-weight: 600; font-size: 1.2rem; margin-bottom: 15px;">Decathlon Active Classes</p>
+            <p style="color: var(--text-grey); font-size: 1.1rem; max-width: 800px; margin: 0 auto; line-height: 1.8;">
+                Elevate your physical and mental capabilities in a professional sports environment. Join our expert-led Karate, Zumba, and Yoga training sessions designed for all fitness levels.
+            </p>
+        </section>
+
+        <section class="container reveal">
+            <div class="card" style="max-width: 800px; margin: 0 auto; padding: 40px;">
+                
+                <form id="admissionForm">
+                    <h2 class="form-section-title" style="margin-top: 0;">Personal Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Enter full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender *</label>
+                            <select id="gender" class="form-control" required>
+                                <option value="" disabled selected>Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth *</label>
+                            <input type="date" id="dob" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address (Optional)</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter email address">
+                        </div>
+                        <div class="form-group" id="guardianGroup" style="display: none; animation: fadeIn 0.3s ease;">
+                            <label for="guardianName">Guardian Name * <span style="font-size: 0.8rem; color: var(--text-grey); font-weight: normal;">(Required for minors)</span></label>
+                            <input type="text" id="guardianName" class="form-control" placeholder="Enter guardian name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address with PIN Code *</label>
+                        <textarea id="address" class="form-control" rows="3" placeholder="Enter full address including PIN code" required></textarea>
+                    </div>
+
+                    <h2 class="form-section-title">Program Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="activity">Preferred Activity *</label>
+                            <select id="activity" class="form-control" required>
+                                <option value="" disabled selected>Select activity</option>
+                                <option value="Karate">Karate</option>
+                                <option value="Zumba">Zumba</option>
+                                <option value="Yoga">Yoga</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="center">Preferred Center *</label>
+                            <select id="center" class="form-control" required>
+                                <option value="Decathlon Palakkad" selected>Decathlon Palakkad</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Status *</label>
+                        <div class="checkbox-group" style="flex-direction: row; gap: 20px;">
+                            <label class="checkbox-label"><input type="radio" name="status" value="Student" required> Student</label>
+                            <label class="checkbox-label"><input type="radio" name="status" value="Working Professional"> Working Professional</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="studentGroup" style="display: none; animation: fadeIn 0.3s ease;">
+                        <label for="standard">Standard / Course *</label>
+                        <input type="text" id="standard" class="form-control" placeholder="E.g., 10th Grade, B.Sc Physics">
+                    </div>
+                    
+                    <div class="form-group" id="profGroup" style="display: none; animation: fadeIn 0.3s ease;">
+                        <label for="occupation">Occupation / Job Title *</label>
+                        <input type="text" id="occupation" class="form-control" placeholder="E.g., Software Engineer, Teacher">
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; font-size: 1.2rem; margin-top: 20px;">Get Admission</button>
+                </form>
+
+                <div id="admissionSuccess" style="display: none; text-align: center; padding: 30px 10px; animation: fadeIn 0.5s ease;">
+                    <h2 style="color: #25D366; font-size: 2.5rem; margin-bottom: 15px;">Yay! 🎉</h2>
+                    <p style="font-size: 1.2rem; color: var(--text-white);">You successfully applied for Decathlon Active Classes.</p>
+                    
+                    <p style="font-size: 1.2rem; margin: 15px 0;">Your Application ID: <strong id="displayDecAppId" style="color: var(--primary-color);"></strong></p>
+                    
+                    <p style="color: var(--text-grey); margin-top: 10px;">Our team will review your application and contact you shortly.</p>
+                    <button onclick="location.reload()" class="btn btn-outline" style="margin-top: 25px;">Submit Another Application</button>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3 style="color: var(--primary-color);">Processing Admission...</h3>
+    </div>
+
+    <footer>
+        <h2 style="font-size: 1.8rem; margin-bottom: 5px;">Stado International</h2>
+        <p style="color: var(--text-grey);">Institute of Martial Arts & Sports</p>
+        <p style="color: var(--text-grey); font-size: 0.9rem; margin-top: 20px;">&copy; 2026 Stado International. All Rights Reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById('admissionForm');
+            const dobInput = document.getElementById('dob');
+            const guardianGroup = document.getElementById('guardianGroup');
+            const guardianNameInput = document.getElementById('guardianName');
+            
+            const statusRadios = document.querySelectorAll('input[name="status"]');
+            const studentGroup = document.getElementById('studentGroup');
+            const standardInput = document.getElementById('standard');
+            const profGroup = document.getElementById('profGroup');
+            const occupationInput = document.getElementById('occupation');
+
+            // 1. Calculate Age & Show Guardian Field if under 18
+            dobInput.addEventListener('change', function() {
+                const dob = new Date(this.value);
+                const today = new Date();
+                let age = today.getFullYear() - dob.getFullYear();
+                const m = today.getMonth() - dob.getMonth();
+                
+                // Adjust age if birthday hasn't occurred yet this year
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+
+                if (age < 18) {
+                    guardianGroup.style.display = 'block';
+                    guardianNameInput.setAttribute('required', 'true');
+                } else {
+                    guardianGroup.style.display = 'none';
+                    guardianNameInput.removeAttribute('required');
+                    guardianNameInput.value = ''; // clear if they change date
+                }
+            });
+
+            // 2. Toggle Student / Working Professional Fields
+            statusRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'Student') {
+                        studentGroup.style.display = 'block';
+                        standardInput.setAttribute('required', 'true');
+                        
+                        profGroup.style.display = 'none';
+                        occupationInput.removeAttribute('required');
+                        occupationInput.value = '';
+                    } else if (this.value === 'Working Professional') {
+                        profGroup.style.display = 'block';
+                        occupationInput.setAttribute('required', 'true');
+                        
+                        studentGroup.style.display = 'none';
+                        standardInput.removeAttribute('required');
+                        standardInput.value = '';
+                    }
+                });
+            });
+
+            // 3. Handle Form Submission via Supabase
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault(); // Stop page reload
+
+                    // Show loading overlay
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    loadingOverlay.style.display = 'flex';
+
+                    try {
+                        // Ensure Supabase is initialized
+                        if (!window.supabaseClient) {
+                            throw new Error("Supabase is not configured.");
+                        }
+                        const supabase = window.supabaseClient;
+
+                        // --- GENERATE APPLICATION ID ---
+                        const currentYear = new Date().getFullYear();
+
+                        // Fetch the last ID for the current year
+                        const { data: lastApp, error: fetchError } = await supabase
+                            .from('decathlon_admissions')
+                            .select('application_id')
+                            .eq('application_year', currentYear)
+                            .order('created_at', { ascending: false })
+                            .limit(1);
+
+                        let nextNumber = 1;
+                        if (lastApp && lastApp.length > 0 && lastApp[0].application_id) {
+                            const lastIdStr = lastApp[0].application_id; // e.g., DCN-2026-005
+                            const parts = lastIdStr.split('-');
+                            if(parts.length === 3) {
+                                nextNumber = parseInt(parts[2], 10) + 1;
+                            }
+                        }
+                        const formattedNumber = nextNumber.toString().padStart(3, '0');
+                        const applicationId = `DCN-${currentYear}-${formattedNumber}`;
+                        // -------------------------------
+
+                        // Gather all form data
+                        const statusRadios = document.querySelectorAll('input[name="status"]');
+                        let applicantType = "";
+                        statusRadios.forEach(radio => {
+                            if (radio.checked) applicantType = radio.value;
+                        });
+
+                        const admissionData = {
+                            application_id: applicationId,     // Added ID
+                            application_year: currentYear,     // Added Year
+                            full_name: document.getElementById('fullName').value,
+                            gender: document.getElementById('gender').value,
+                            dob: document.getElementById('dob').value,
+                            phone: document.getElementById('phone').value,
+                            email: document.getElementById('email').value || null,
+                            guardian_name: document.getElementById('guardianName').value || null,
+                            address: document.getElementById('address').value,
+                            preferred_activity: document.getElementById('activity').value,
+                            preferred_center: document.getElementById('center').value,
+                            applicant_type: applicantType,
+                            standard: document.getElementById('standard').value || null,
+                            occupation: document.getElementById('occupation').value || null,
+                            status: 'New' 
+                        };
+
+                        // Insert into Supabase
+                        const { error: insertError } = await supabase
+                            .from('decathlon_admissions')
+                            .insert([admissionData]);
+
+                        if (insertError) throw insertError;
+
+                        // Success handling
+                        loadingOverlay.style.display = 'none';
+                        form.style.display = 'none';
+                        
+                        // Show ID on screen
+                        document.getElementById('displayDecAppId').innerText = applicationId;
+                        document.getElementById('admissionSuccess').style.display = 'block';
+                        
+                        // Scroll to top of card to show success message clearly
+                        window.scrollTo({ top: document.querySelector('.card').offsetTop - 50, behavior: 'smooth' });
+
+                    } catch (error) {
+                        loadingOverlay.style.display = 'none';
+                        console.error("Admission Submission Error:", error);
+                        alert(`Error: ${error.message}`);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

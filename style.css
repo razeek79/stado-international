@@ -690,3 +690,117 @@ select.form-control option {
     color: var(--primary-color);
 }
 /******************************************************************************************/
+
+
+/* --- Modal Styles (For P8 T&C) --- */
+.modal-overlay {
+    display: none; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 4000; 
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex; opacity: 1;
+}
+.modal-content {
+    background: var(--bg-card); 
+    border: 1px solid var(--primary-color);
+    padding: 40px; border-radius: 12px; 
+    max-width: 600px; width: 90%;
+    position: relative; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    transform: translateY(-20px); transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+.modal-close {
+    position: absolute; top: 20px; right: 25px; 
+    font-size: 2rem; color: var(--text-grey); 
+    cursor: pointer; transition: var(--transition);
+}
+.modal-close:hover { color: var(--primary-color); transform: scale(1.1); }
+/*******/
+
+
+
+/* --- NEW Contact Page Styles (Mobile First) --- */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile default: 1 column */
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Individual Info Cards for better mobile stacking */
+.contact-info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.info-card {
+    background: var(--bg-card);
+    padding: 30px 25px;
+    border-radius: 12px;
+    border-top: 3px solid var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    text-align: center;
+}
+.info-card h4 {
+    color: var(--text-grey);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+/* Clickable Contact Links (Phone with icon) */
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-white);
+    font-size: 1.3rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+.contact-link:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}
+.contact-link svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--primary-color);
+}
+
+.contact-form-card {
+    background: var(--bg-card);
+    padding: 30px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* Desktop View Adjustments */
+@media (min-width: 850px) {
+    .contact-grid {
+        grid-template-columns: 350px 1fr; /* Left sidebar for info, Right for form */
+        gap: 50px;
+        align-items: start;
+    }
+    .info-card {
+        text-align: left;
+        padding: 35px 30px;
+    }
+    .contact-link {
+        justify-content: flex-start;
+    }
+    .contact-form-card {
+        padding: 50px 40px;
+    }
+}
+/***contact/**/
