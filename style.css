@@ -726,15 +726,17 @@ select.form-control option {
 
 
 
-/* --- NEW Contact Page Styles (Mobile First) --- */
+/* --- NEW Contact Page Styles (Mobile First & Centered) --- */
 .contact-grid {
     display: grid;
     grid-template-columns: 1fr; /* Mobile default: 1 column */
     gap: 30px;
-    margin-top: 20px;
+    width: 100%;
+    max-width: 500px; /* Keeps the cards a nice size on mobile */
+    margin: 0 auto; /* This perfectly centers the cards on the screen! */
 }
 
-/* Individual Info Cards for better mobile stacking */
+/* Individual Info Cards */
 .contact-info-cards {
     display: flex;
     flex-direction: column;
@@ -756,7 +758,7 @@ select.form-control option {
     margin-bottom: 15px;
 }
 
-/* Clickable Contact Links (Phone with icon) */
+/* Clickable Contact Links */
 .contact-link {
     display: inline-flex;
     align-items: center;
@@ -788,6 +790,7 @@ select.form-control option {
 /* Desktop View Adjustments */
 @media (min-width: 850px) {
     .contact-grid {
+        max-width: 1000px; /* Expands container for desktop */
         grid-template-columns: 350px 1fr; /* Left sidebar for info, Right for form */
         gap: 50px;
         align-items: start;

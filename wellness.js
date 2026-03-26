@@ -199,7 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     signatory_date: document.getElementById('signatoryDate').value,
                     // expected_outcomes is removed from payload!
                     ip_address: ipAddress,
-                    user_agent: userAgent
+                    user_agent: userAgent,
+                    status: 'New'
                 };
 
                 // Save to Supabase
