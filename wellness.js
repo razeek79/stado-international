@@ -252,7 +252,7 @@ Date: ${formData.signatory_date}
 _Submitted via STADO Wellness Application System_`;
 
                 const encodedMessage = encodeURIComponent(waMessage);
-                const waUrl = `https://wa.me/919496336791?text=${encodedMessage}`;
+                const waUrl = `https://wa.me/919496952179?text=${encodedMessage}`;
 
                 // UI Updates & Redirect
                 loadingOverlay.style.display = 'none';
