@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Admission | Stado International</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="../images/stado_emblem_compressed.png" alt="Stado Logo">
+                <span class="logo-text">STADO</span>
+            </div>
+            <div class="hamburger" id="hamburger">☰</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../programs.html">Programs</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container reveal active" style="padding-top: 100px; padding-bottom: 50px;">
+            <div class="text-center" style="margin-bottom: 30px;">
+                <h1 style="font-size: clamp(2rem, 8vw, 3rem);">Program Admission</h1>
+                <p id="programSubtitle" style="color: var(--primary-color); font-weight: 600; font-size: 1.2rem;"></p>
+            </div>
+
+            <div class="card" style="max-width: 800px; margin: 0 auto; padding: clamp(20px, 5vw, 40px); display: block;">
+                <form id="admissionForm">
+                    <div class="form-group">
+                        <label style="color: var(--primary-color); font-size: 0.8rem; text-transform: uppercase;">Target Discipline</label>
+                        <input type="text" id="activity" class="form-control" readonly style="background: rgba(212, 175, 55, 0.05); border-color: var(--primary-color); color: var(--primary-color); font-weight: bold;">
+                    </div>
+
+                    <h2 class="form-section-title">Personal Details</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" class="form-control" required></div>
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <select id="gender" class="form-control" required>
+                                <option value="" disabled selected>Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Date of Birth *</label><input type="date" id="dob" class="form-control" required></div>
+                        <div class="form-group"><label>Phone Number *</label><input type="tel" id="phone" class="form-control" required placeholder="Phone number"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Email (Optional)</label><input type="email" id="email" class="form-control" placeholder="Email address"></div>
+                        <div class="form-group" id="guardianGroup" style="display: none;">
+                            <label>Guardian Name *</label>
+                            <input type="text" id="guardianName" class="form-control" placeholder="Required for minors">
+                        </div>
+                    </div>
+
+                    <div class="form-group"><label>Address with PIN Code *</label><textarea id="address" class="form-control" rows="3" required></textarea></div>
+
+                    <h2 class="form-section-title">Center & Status</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preferred Center *</label>
+                            <select id="center" class="form-control" required>
+                                <option value="" disabled selected>Select a center</option>
+                                <option value="Decathlon Palakkad">Decathlon Palakkad</option>
+                                <option value="Oxygen Gym Karuvarakundu">Oxygen Gym Karuvarakundu</option>
+                                <option value="Liberty Gym Pandikkad">Liberty Gym Pandikkad</option>
+                                <option value="Morning Star Kalikavu">Morning Star Kalikavu</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Status *</label>
+                            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                                <label class="checkbox-label" style="font-size: 0.9rem;"><input type="radio" name="status" value="Student" required> Student</label>
+                                <label class="checkbox-label" style="font-size: 0.9rem;"><input type="radio" name="status" value="Working Professional"> Professional</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn" style="width: 100%; margin-top: 20px; padding: 15px;">Submit Admission</button>
+                </form>
+
+                <div id="successDiv" style="display: none; text-align: center; padding: 20px 0;">
+                    <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid #25D366; padding: 30px; border-radius: 15px;">
+                        <h2 style="color: #25D366; margin-bottom: 15px;">Admission Success! 🎉</h2>
+                        <p style="margin-bottom: 20px;">Your application has been logged. Please note your ID:</p>
+                        <div id="appId" style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 25px;"></div>
+                        <button onclick="window.location.href='../programs.html'" class="btn btn-outline" style="width: 100%;">Back to Programs</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
+        <div class="spinner"></div>
+        <h3 style="color: var(--primary-color); margin-top: 20px;">Processing Application...</h3>
+    </div>
+
+    <script src="../config.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const params = new URLSearchParams(window.location.search);
+            const program = params.get("program") || "General Training";
+            
+            // UI Updates
+            document.getElementById("activity").value = program;
+            document.getElementById("programSubtitle").innerText = `Joining ${program}`;
+
+            const centerSelect = document.getElementById("center");
+            const supabase = window.supabaseClient;
+
+            // --- NEW: FETCH & FILTER CENTERS ---
+            async function loadRelevantCenters() {
+                try {
+                    // Fetch centers where the disciplines array contains the current program
+                    const { data: centers, error } = await supabase
+                        .from('centers')
+                        .select('name')
+                        .contains('disciplines', [program]);
+
+                    if (error) throw error;
+
+                    // Clear current options (except the first disabled one)
+                    centerSelect.innerHTML = '<option value="" disabled selected>Select a center</option>';
+
+                    if (centers && centers.length > 0) {
+                        centers.forEach(center => {
+                            const option = document.createElement("option");
+                            option.value = center.name;
+                            option.text = center.name;
+                            centerSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement("option");
+                        option.text = "No centers available for this program";
+                        option.disabled = true;
+                        centerSelect.appendChild(option);
+                    }
+                } catch (err) {
+                    console.error("Error loading centers:", err);
+                    centerSelect.innerHTML = '<option value="" disabled selected>Error loading centers</option>';
+                }
+            }
+
+            // Run the filter
+            await loadRelevantCenters();
+
+            // --- EXISTING FORM LOGIC ---
+            const dobInput = document.getElementById('dob');
+            const guardianGroup = document.getElementById('guardianGroup');
+            const guardianField = document.getElementById('guardianName');
+
+            dobInput.addEventListener('change', function() {
+                const age = new Date().getFullYear() - new Date(this.value).getFullYear();
+                if(age < 18) {
+                    guardianGroup.style.display = 'block';
+                    guardianField.required = true;
+                } else {
+                    guardianGroup.style.display = 'none';
+                    guardianField.required = false;
+                    guardianField.value = "";
+                }
+            });
+
+            document.getElementById('admissionForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerText = "Processing...";
+
+                const supabase = window.supabaseClient;
+                const currentYear = new Date().getFullYear();
+
+                // Prepare data (WE DO NOT SEND application_id, let DB handle it)
+                const admissionData = {
+                    application_year: currentYear,
+                    full_name: document.getElementById('fullName').value,
+                    gender: document.getElementById('gender').value,
+                    dob: document.getElementById('dob').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value || null,
+                    guardian_name: document.getElementById('guardianName')?.value || null,
+                    address: document.getElementById('address').value,
+                    preferred_activity: document.getElementById("activity").value,
+                    preferred_center: document.getElementById("center").value,
+                    applicant_type: document.querySelector('input[name="status"]:checked').value,
+                    status: 'New'
+                };
+
+                try {
+                    // Insert and select the created row back to get the ID generated by the DB
+                    const { data, error } = await supabase
+                        .from('admissions')
+                        .insert([admissionData])
+                        .select('application_id') 
+                        .single();
+
+                    if (error) throw error;
+
+                    // Success: Show the ID generated by the database
+                    document.getElementById('admissionForm').style.display = 'none';
+                    document.getElementById('appId').innerText = data.application_id;
+                    document.getElementById('successDiv').style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                } catch (err) {
+                    console.error("Submission Error:", err);
+                    alert("Error: " + err.message);
+                    btn.disabled = false;
+                    btn.innerText = "Submit Admission";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -149,6 +149,18 @@ main { padding-top: 80px; min-height: 80vh; }
 .hero h2 { font-size: 1.2rem; color: var(--text-white); font-weight: 300; margin-bottom: 25px; font-family: var(--font-body); letter-spacing: 4px; }
 .hero p { max-width: 600px; color: var(--text-grey); margin-bottom: 35px; }
 
+.hero-title {
+  font-size: 3.5rem;
+}
+
+@media (max-width: 768px) {
+  .hero h1.hero-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+  }
+}
+
+
 /* 🌟 Scroll Reveal Animation Classes */
 .reveal {
   opacity: 0;
