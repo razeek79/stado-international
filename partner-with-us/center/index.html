@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply as a STADO Center | Partner Network</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/partner-with-us.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../config.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #0071E3;
+            --disabled-gray: #d2d2d7;
+            --studio-bg: #F5F5F7;
+            --pure-white: #FFFFFF;
+            --border-soft: rgba(0,0,0,0.1);
+        }
+
+        body { background: var(--studio-bg); color: #1d1d1f; margin: 0; }
+        .apply-wrapper { max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: stepFade 0.4s ease-out; }
+
+        @keyframes stepFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-input {
+            width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-soft);
+            background: var(--pure-white); font-size: 1rem; margin-top: 8px; outline: none;
+            transition: 0.2s; box-sizing: border-box;
+        }
+
+        .label-text { font-size: 0.85rem; font-weight: 700; color: #6e6e73; text-transform: uppercase; margin-left: 5px; }
+
+        .discipline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 15px; }
+        .tag-select {
+            padding: 12px; border-radius: 12px; background: #fff; border: 1px solid var(--border-soft);
+            text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+        }
+        .tag-select.selected { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+
+        #sig-canvas { background: #fff; border: 1px dashed var(--border-soft); border-radius: 16px; width: 100%; height: 220px; touch-action: none; }
+
+        .step-dots { display: flex; gap: 8px; margin-bottom: 40px; justify-content: center; }
+        .step-dot { width: 40px; height: 4px; background: var(--disabled-gray); border-radius: 10px; }
+        .step-dot.active { background: var(--primary-blue); }
+
+        .btn-step-nav { background: var(--disabled-gray); color: #86868b; cursor: not-allowed; border: none; }
+        .btn-step-nav.ready { background: var(--primary-blue); color: #fff; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3); }
+    </style>
+</head>
+<body>
+
+    <main class="apply-wrapper">
+        <div class="header-center" style="text-align: center; margin-bottom: 40px;">
+            <img src="../../../images/stado_emblem_compressed.png" alt="STADO" width="45" style="margin-bottom: 15px;">
+            <h1 style="font-size: 2.2rem; margin-bottom: 10px;">Apply as a Centre</h1>
+        </div>
+
+        <div class="step-dots">
+            <div class="step-dot active"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+        </div>
+
+        <form id="centerForm">
+            <!-- STEP 1: Contact -->
+            <div class="form-step active" id="step1">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Owner's Name *</span>
+                    <input type="text" name="owner_name" class="glass-input required-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Centre Name *</span>
+                    <input type="text" name="center_name" class="glass-input required-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Email *</span>
+                    <input type="email" name="email" class="glass-input required-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Phone *</span>
+                    <input type="tel" name="phone" class="glass-input required-input" required>
+                </div>
+                <button type="button" id="next1" class="btn-round btn-step-nav" style="width: 100%;" disabled onclick="nextStep(2)">Next Step</button>
+            </div>
+
+            <!-- STEP 2: Programs & Location -->
+            <div class="form-step" id="step2">
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Disciplines (Optional)</span>
+                    <div class="discipline-grid" id="progGrid">
+                        <div class="tag-select" data-val="Karate">Karate</div>
+                        <div class="tag-select" data-val="Kung Fu">Kung Fu</div>
+                        <div class="tag-select" data-val="Kalari">Kalari</div>
+                        <div class="tag-select" data-val="Kickboxing">Kickboxing</div>
+                        <div class="tag-select" data-val="Wushu">Wushu</div>
+                        <div class="tag-select" data-val="Yoga">Yoga</div>
+                        <div class="tag-select" data-val="Zumba">Zumba</div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">City *</span>
+                    <input type="text" name="city" class="glass-input required-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Address *</span>
+                    <textarea name="address" class="glass-input required-input" rows="2" required></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Google Maps URL *</span>
+                    <input type="url" name="maps_url" class="glass-input required-input" required>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn-round btn-wa" style="flex: 1;" onclick="nextStep(1)">Back</button>
+                    <button type="button" id="next2" class="btn-round btn-step-nav" style="flex: 2;" disabled onclick="nextStep(3)">Agreement</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Submission -->
+            <div class="form-step" id="step3">
+                <div class="agreement-area" style="background:#fff; padding:20px; border-radius:16px; border:1px solid var(--border-soft); font-size:0.85rem; margin-bottom:20px; height:120px; overflow-y:auto;">
+                    <p>I confirm that all provided information is accurate and I agree to the STADO International standards regarding training quality and brand integrity.</p>
+                </div>
+
+                <div style="margin-bottom: 25px; display: flex; gap: 10px; align-items: center;">
+                    <input type="checkbox" id="checkAgree" style="width: 22px; height: 22px;">
+                    <label for="checkAgree" style="font-size: 0.9rem; font-weight: 600;">I agree to the terms</label>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Owner's Signature *</span>
+                    <canvas id="sig-canvas"></canvas>
+                    <button type="button" onclick="clearSig()" style="background:none; border:none; color:var(--primary-blue); font-size:0.75rem; margin-top:10px; cursor:pointer;">CLEAR SIGNATURE</button>
+                </div>
+
+                <div id="formMsg"></div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn-round btn-wa" style="flex: 1;" onclick="nextStep(2)">Back</button>
+                    <button type="submit" id="submitBtn" class="btn-round btn-step-nav" style="flex: 2;" disabled>Submit Application</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // --- NAVIGATION & VALIDATION ---
+        window.nextStep = function(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            const dots = document.querySelectorAll('.step-dot');
+            dots.forEach((d, i) => (i < step) ? d.classList.add('active') : d.classList.remove('active'));
+            if(step === 3) resizeCanvas();
+            window.scrollTo(0, 0);
+        }
+
+        const validateStep = (stepId, btnId) => {
+            const step = document.getElementById(stepId);
+            const btn = document.getElementById(btnId);
+            const inputs = step.querySelectorAll('.required-input');
+            const check = () => {
+                let allFilled = true;
+                inputs.forEach(i => { if(!i.value.trim()) allFilled = false; });
+                if(allFilled) { btn.disabled = false; btn.classList.add('ready'); }
+                else { btn.disabled = true; btn.classList.remove('ready'); }
+            };
+            inputs.forEach(i => i.addEventListener('input', check));
+        };
+        validateStep('step1', 'next1');
+        validateStep('step2', 'next2');
+
+        // --- SIGNATURE & DISCIPLINES ---
+        let selectedProgs = [];
+        const canvas = document.getElementById('sig-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        document.getElementById('progGrid').addEventListener('click', (e) => {
+            if(e.target.classList.contains('tag-select')) {
+                const val = e.target.dataset.val;
+                if(selectedProgs.includes(val)) {
+                    selectedProgs = selectedProgs.filter(p => p !== val);
+                    e.target.classList.remove('selected');
+                } else {
+                    selectedProgs.push(val);
+                    e.target.classList.add('selected');
+                }
+            }
+        });
+
+        function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+        window.clearSig = function() { ctx.clearRect(0, 0, canvas.width, canvas.height); toggleSubmit(); }
+
+        const getPos = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        };
+
+        const startDraw = (e) => { isDrawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); };
+        const drawing = (e) => { if(!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.stroke(); };
+        const stopDraw = () => { isDrawing = false; toggleSubmit(); };
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', drawing);
+        canvas.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('touchstart', startDraw, {passive: false});
+        canvas.addEventListener('touchmove', drawing, {passive: false});
+        canvas.addEventListener('touchend', stopDraw);
+
+        const checkAgree = document.getElementById('checkAgree');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function toggleSubmit() {
+            const hasSig = !ctx.getImageData(0,0,canvas.width,canvas.height).data.every(v => v === 0);
+            if(checkAgree.checked && hasSig) { submitBtn.disabled = false; submitBtn.classList.add('ready'); }
+            else { submitBtn.disabled = true; submitBtn.classList.remove('ready'); }
+        }
+        checkAgree.addEventListener('change', toggleSubmit);
+
+        // --- SUBMISSION ---
+        document.getElementById('centerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.innerText = "Processing...";
+            submitBtn.disabled = true;
+
+            try {
+                const f = e.target;
+                const fullAddress = `${f.address.value}, ${f.city.value}, India`;
+                
+                // GEOLOCATION (Method A)
+                let lat = null, lng = null;
+                const googleKey = "YOUR_RESTRICTED_GOOGLE_API_KEY"; // REPLACE WITH YOUR KEY
+                try {
+                    const geoRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fullAddress)}&key=${googleKey}`);
+                    const geoData = await geoRes.json();
+                    if(geoData.status === "OK") {
+                        lat = geoData.results[0].geometry.location.lat;
+                        lng = geoData.results[0].geometry.location.lng;
+                    }
+                } catch(ge) { console.error("Geo error", ge); }
+
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+
+                const blob = await new Promise(res => canvas.toBlob(res));
+                const fileName = `sig_${Date.now()}.png`;
+                await window.supabaseClient.storage.from('center-signatures').upload(`signatures/${fileName}`, blob);
+                const { data: { publicUrl } } = window.supabaseClient.storage.from('center-signatures').getPublicUrl(`signatures/${fileName}`);
+
+                const { error: insErr } = await window.supabaseClient.from('center_applications').insert([{
+                    owner_name: f.owner_name.value,
+                    name: f.center_name.value,
+                    email: f.email.value,
+                    contact_phone: f.phone.value,
+                    city: f.city.value,
+                    address: f.address.value,
+                    google_maps_url: f.maps_url.value,
+                    disciplines: selectedProgs,
+                    latitude: lat,
+                    longitude: lng,
+                    ip_address: ipData.ip,
+                    user_agent: navigator.userAgent,
+                    signature_url: publicUrl,
+                    agreement_accepted_at: new Date().toISOString(),
+                    status: 'pending'
+                }]);
+
+                if(insErr) throw insErr;
+                document.querySelector('.apply-wrapper').innerHTML = `
+                    <div style="text-align:center; padding: 60px 20px;">
+                        <h2 style="color:#25D366;">Application Submitted!</h2>
+                        <p>Our team will review your application and contact you shortly.</p>
+                        <a href="/" class="btn-round btn-premium" style="display:inline-block; margin-top:20px; background:var(--primary-blue); color:#fff;">Back to Home</a>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('formMsg').innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Application";
+            }
+        });
+    </script>
+</body>
+</html>
