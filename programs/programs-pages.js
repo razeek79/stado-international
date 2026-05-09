@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Handle Smooth Scroll for CTA buttons
-    const findCentreBtn = document.querySelector('a[href="#find-centre"]');
+    const findCentreBtn = document.querySelector('a[href="#find-center"]');
     if (findCentreBtn) {
         findCentreBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector('#find-centre').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('#find-center').scrollIntoView({ behavior: 'smooth' });
         });
     }
 

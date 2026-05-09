@@ -25,7 +25,7 @@
             </div>
             <ul class="nav-links">
                 <li><a href="../../index.html">Home</a></li>
-                <li><a href="../../centers-network.html">Centres</a></li>
+                <li><a href="../../centers-network.html">Centers</a></li>
             </ul>
         </nav>
     </header>
@@ -33,7 +33,7 @@
     <main>
         <section class="program-hero karate-hero">
             <div class="hero-content">
-                <p class="hero-tagline">STADO International Academy</p>
+                <p class="hero-tagline">STADO International</p>
                 <h1>Karate</h1>
                 <a href="#find" class="btn btn-primary" style="margin-top: 30px; padding: 18px 45px;">Find a Centre</a>
             </div>
@@ -127,7 +127,7 @@
             function render(data) {
                 const grid = document.getElementById('centerResults');
                 if (!data.length) {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No centres found in this area.</p>';
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No centers found in this area.</p>';
                     return;
                 }
                 grid.innerHTML = data.map(c => `

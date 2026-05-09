@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STADO Centres | Find Official Training Centres Near You</title>
+    <title>STADO Centers | Find Official Training Centers Near You</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
@@ -244,8 +244,8 @@
                 <span class="logo-text">STADO</span>
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html">Home</a></li>
-                <li><a href="index.html" class="active">Centres</a></li>
+                <li><a href="../">Home</a></li>
+                <li><a href="/centers/" class="active">Centers</a></li>
             </ul>
             <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('active')">☰</div>
         </nav>
@@ -254,11 +254,11 @@
     <main>
         <section class="hero-centers">
             <div class="hero-content">
-                <h1>Official Centres</h1>
+                <h1>Official Centers</h1>
                 <p>Discover the STADO network. Premium training environments engineered for martial arts, wellness, and elite performance.</p>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <a href="#find" class="btn btn-primary">Find Nearby Centres</a>
-                    <a href="../partner-with-us/index.html" class="btn btn-outline" style="color: #fff; border-color: #fff;">Partner With Us</a>
+                    <a href="#find" class="btn btn-primary">Find Nearby Centers</a>
+                    <a href="../partner-with-us/" class="btn btn-outline" style="color: #fff; border-color: #fff;">Partner With Us</a>
                 </div>
             </div>
         </section>
@@ -273,15 +273,15 @@
 
                 <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kungfu.webp')"><div class="pg-content"><h3>Kung Fu</h3><p>Mastery & Flow</p><a href="../programs/kungfu/" class="btn-sm">Learn More</a></div></div>
 
-                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kalari.webp')"><div class="pg-content"><h3>Kalari</h3><p>Ancient Tradition</p><a href="../kalari/index.html" class="btn-sm">Learn More</a></div></div>
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kalari.webp')"><div class="pg-content"><h3>Kalari</h3><p>Ancient Tradition</p><a href="../programs/kalari/" class="btn-sm">Learn More</a></div></div>
 
-                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kickboxing.webp')"><div class="pg-content"><h3>Kickboxing</h3><p>Strike & Speed</p><a href="../kickboxing/index.html" class="btn-sm">Learn More</a></div></div>
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kickboxing.webp')"><div class="pg-content"><h3>Kickboxing</h3><p>Strike & Speed</p><a href="../programs/kickboxing/" class="btn-sm">Learn More</a></div></div>
 
-                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/wushu.webp')"><div class="pg-content"><h3>Wushu</h3><p>Art of Combat</p><a href="../wushu/index.html" class="btn-sm">Learn More</a></div></div>
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/wushu.webp')"><div class="pg-content"><h3>Wushu</h3><p>Art of Combat</p><a href="../programs/wushu/" class="btn-sm">Learn More</a></div></div>
 
-                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/yoga.webp')"><div class="pg-content"><h3>Yoga</h3><p>Balance & Wellness</p><a href="../yoga/index.html" class="btn-sm">Learn More</a></div></div>
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/yoga.webp')"><div class="pg-content"><h3>Yoga</h3><p>Balance & Wellness</p><a href="../programs/yoga/" class="btn-sm">Learn More</a></div></div>
 
-                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/zumba.webp')"><div class="pg-content"><h3>Zumba</h3><p>Rhythm & Energy</p><a href="../zumba/index.html" class="btn-sm">Learn More</a></div></div>
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/zumba.webp')"><div class="pg-content"><h3>Zumba</h3><p>Rhythm & Energy</p><a href="../programs/zumba/" class="btn-sm">Learn More</a></div></div>
 
             </div>
 
@@ -354,7 +354,7 @@
         function renderCenters(data) {
             const grid = document.getElementById('centersGrid');
             if (!data.length) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No centres match your search.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No centers match your search.</p>';
                 return;
             }
             grid.innerHTML = data.map(c => `
@@ -368,7 +368,7 @@
                     <div class="badge-box">
                         ${c.disciplines.map(d => `<span class="badge">${d}</span>`).join('')}
                     </div>
-                    <a href="../center/index.html?id=${c.id}" class="btn-explore">Explore Centre</a>
+                    <a href="../center/?id=${c.id}" class="btn-explore">Explore Centre</a>
                 </div>
             `).join('');
             initReveal();
@@ -443,7 +443,7 @@
             document.getElementById('locationStatus').innerText = "Locating...";
             navigator.geolocation.getCurrentPosition((pos) => {
                 sortCenters(pos.coords.latitude, pos.coords.longitude);
-                document.getElementById('locationStatus').innerText = "Nearest centres found.";
+                document.getElementById('locationStatus').innerText = "Nearest centers found.";
             });
         });
 

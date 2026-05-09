@@ -204,3 +204,15 @@
 @media (max-width: 600px) {
     .programs-grid { grid-template-columns: 1fr; }
 }
+
+/* Hide it on larger screens */
+.mobile-only-br {
+    display: none;
+}
+
+/* Show it on mobile screens (e.g., smaller than 768px) */
+@media screen and (max-width: 768px) {
+    .mobile-only-br {
+        display: inline;
+    }
+}
