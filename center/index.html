@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STADO Centre | Details</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        :root {
+            --glass-white: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --primary-red: #A51C30;
+            --text-silver: #F5F5F7;
+        }
+
+        body { background-color: #000; color: var(--text-silver); }
+
+        /* Loader Overlay */
+        #loader-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--glass-white); border-top-color: var(--primary-red); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Hero Section */
+        .center-hero { 
+            padding: 180px 5% 80px; 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), #000), 
+                        url('../images/bg-images/centers-bg-lap.webp') center/cover;
+            text-align: center; 
+        }
+        .hero-brand { font-size: 1.1rem; letter-spacing: 5px; color: #fff; font-family: var(--font-heading); margin-bottom: 8px; opacity: 0.9; }
+        .hero-city { font-size: clamp(2.5rem, 8vw, 4.5rem); color: var(--primary-red); font-family: var(--font-heading); text-transform: uppercase; margin-bottom: 20px; line-height: 1; }
+        .hero-partner { color: #888; font-size: 0.9rem; margin-bottom: 5px; letter-spacing: 1px; font-weight: 400; }
+        .hero-address { color: #555; font-size: 0.85rem; max-width: 500px; margin: 0 auto 35px; line-height: 1.5; }
+
+        /* Contact & Action Group */
+        .action-group { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-bottom: 40px; }
+        .contact-row { display: flex; gap: 15px; }
+        .icon-btn { 
+            width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            border: 1px solid var(--glass-border); background: var(--glass-white); transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); color: #fff; 
+        }
+        .icon-btn:hover { border-color: var(--primary-red); transform: translateY(-3px); background: rgba(165, 28, 48, 0.1); color: var(--primary-red); }
+        .icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+        .locate-btn { 
+            display: inline-flex; align-items: center; gap: 12px; background: #fff; color: #000; 
+            padding: 16px 35px; border-radius: 50px; font-weight: 700; text-transform: uppercase; 
+            font-size: 0.85rem; letter-spacing: 1px; transition: 0.3s ease;
+        }
+        .locate-btn:hover { background: var(--primary-red); color: #fff; transform: scale(1.05); }
+
+        /* Program Section */
+        .details-container { max-width: 1000px; margin: 60px auto; padding: 0 5%; }
+        .section-title { font-family: var(--font-heading); font-size: 2.2rem; margin-bottom: 40px; text-align: center; letter-spacing: 2px; }
+        
+        .program-card { 
+            background: var(--glass-white); border: 1px solid var(--glass-border); 
+            border-radius: 24px; padding: 40px; margin-bottom: 30px; backdrop-filter: blur(15px); 
+        }
+        .prog-name { font-size: 2rem; color: #fff; margin-bottom: 25px; font-family: var(--font-heading); border-left: 5px solid var(--primary-red); padding-left: 20px; line-height: 1; }
+        
+        .slot-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .slot-item:last-child { border-bottom: none; }
+        .slot-day { font-weight: 600; color: #aaa; font-size: 0.95rem; }
+        .slot-time { color: var(--primary-red); font-weight: 700; font-family: var(--font-heading); font-size: 1.2rem; letter-spacing: 1px; }
+
+        /* Bottom CTA */
+        .bottom-cta { text-align: center; padding: 100px 5%; background: linear-gradient(to top, rgba(165, 28, 48, 0.1), transparent); border-radius: 50px 50px 0 0; }
+
+        /* Selection Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
+        .modal-content { background: #111; border: 1px solid var(--glass-border); padding: 50px 30px; border-radius: 30px; width: 100%; max-width: 450px; text-align: center; }
+        .modal-select { width: 100%; padding: 18px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 15px; margin: 30px 0; font-family: var(--font-body); font-size: 1rem; outline: none; }
+        .modal-select:focus { border-color: var(--primary-red); }
+
+        @media (max-width: 768px) {
+            .program-card { padding: 25px; }
+            .slot-time { font-size: 1rem; }
+            .hero-brand { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay"><div class="spinner"></div></div>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo-container"><img src="../images/stado_emblem_compressed.png" alt="STADO"><span class="logo-text">STADO</span></div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../centers-network.html">Centres</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">☰</div>
+        </nav>
+    </header>
+
+    <main id="page-content" style="display: none;">
+        <section class="center-hero">
+            <div class="hero-content reveal active">
+                <div class="hero-brand">STADO INTERNATIONAL —</div>
+                <h1 id="hero-city" class="hero-city">CITY CENTER</h1>
+                <div id="hero-partner" class="hero-partner">Facility Partner : Loading...</div>
+                <p id="hero-address" class="hero-address">Loading location details...</p>
+                
+                <div class="action-group">
+                    <div class="contact-row">
+                        <a id="wa-link" href="#" class="icon-btn" title="WhatsApp">
+                            <svg viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.982-.364-1.728-.751-2.847-2.512-2.933-2.625-.085-.114-.693-.921-.693-1.756 0-.835.438-1.246.594-1.415.155-.17.339-.213.452-.213.113 0 .226-.002.325.002.103.003.242-.038.378.273.136.311.466 1.137.506 1.221.04.085.067.184.01.3-.057.115-.085.187-.17.284-.085.097-.178.215-.253.284-.101.092-.207.193-.088.373.118.18.525.866 1.13 1.404.779.691 1.433.905 1.636 1.014.204.108.324.09.444-.051.121-.142.522-.607.66-.814.139-.206.277-.173.466-.101.19.073 1.203.567 1.41.671.208.104.347.154.397.242.05.09.05.518-.095.923z"/></svg>
+                        </a>
+                        <a id="phone-link" href="#" class="icon-btn" title="Phone Call">
+                            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.21 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </a>
+                    </div>
+
+                    <a id="maps-btn" href="#" target="_blank" class="locate-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        Locate Us on Maps
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="details-container">
+            <h2 class="section-title">PROGRAM SCHEDULE</h2>
+            <div id="programs-container"></div>
+        </section>
+
+        <section class="bottom-cta">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 25px; letter-spacing: 1px;">Join the elite training network</h2>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="openAdmissionModal()" class="btn btn-primary" style="padding: 18px 45px;">Get Admission</button>
+                <a id="trial-btn" href="#" class="btn btn-outline" style="color:#fff; border-color:#555; padding: 18px 45px;">Book Free Trial</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Admission Selection Modal -->
+    <div id="admissionModal" class="modal">
+        <div class="modal-content">
+            <h2 style="font-family: var(--font-heading); letter-spacing: 1px;">SELECT PROGRAM</h2>
+            <p style="color:#666; font-size:0.9rem; margin-top: 5px;">Choose your discipline to continue</p>
+            <select id="modalSelect" class="modal-select"></select>
+            <button onclick="goToAdmission()" class="btn btn-primary" style="width:100%; padding: 18px;">Proceed to Form</button>
+            <button onclick="closeModal()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; text-transform:uppercase; font-size:0.75rem; font-weight: 600; letter-spacing:2px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let currentCenter = null;
+
+        // Improved formatTime to handle database strings safely
+        const formatTime = (timeStr) => { 
+            if (!timeStr || timeStr === '00:00:00') return "TBD";
+            const parts = timeStr.split(':'); 
+            let h = parseInt(parts[0]);
+            const m = parts[1];
+            const ampm = h >= 12 ? 'PM' : 'AM'; 
+            h = h % 12 || 12;
+            return `${h}:${m} ${ampm}`; 
+        };
+
+        async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const supabase = window.supabaseClient;
+
+            if (!id) { window.location.href = '../centers-network.html'; return; }
+
+            try {
+                // 1. Fetch Center
+                const { data: center, error: cError } = await supabase
+                    .from('centers')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (cError || !center) throw new Error("Center not found");
+
+                // 2. Fetch ALL slots (including inactive to prevent empty cards)
+                const { data: slots, error: sError } = await supabase
+                    .from('center_slots')
+                    .select('*')
+                    .eq('center_id', id)
+                    .order('day_sort_order', { ascending: true });
+
+                console.log("Center Data:", center);
+                console.log("Raw Slots found:", slots);
+
+                currentCenter = center;
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('page-content').style.display = 'block';
+                
+                // Update UI Text
+                document.getElementById('hero-city').innerText = `${center.city} Center`;
+                document.getElementById('hero-partner').innerText = `Facility Partner : ${center.name}`;
+                document.getElementById('hero-address').innerText = center.address;
+                document.getElementById('maps-btn').href = center.google_maps_url || '#';
+                
+                // Contact Links
+                const phone = center.contact_phone || '9496952179';
+                const whatsapp = center.contact_whatsapp || '919496952179';
+                document.getElementById('phone-link').href = `tel:${phone}`;
+                document.getElementById('wa-link').href = `https://wa.me/${whatsapp}?text=Hi, enquiry for STADO ${center.city}`;
+                document.getElementById('trial-btn').href = `https://wa.me/${whatsapp}?text=I want to book a Free Trial at STADO ${center.city}`;
+
+                // RENDER LOGIC
+                const container = document.getElementById('programs-container');
+                
+                // Ensure disciplines is treated as an array
+                const disciplines = Array.isArray(center.disciplines) ? center.disciplines : [];
+
+                if(disciplines.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; opacity:0.5;">No programs configured.</p>`;
+                } else {
+                    container.innerHTML = disciplines.map(prog => {
+                        // CLEAN STRING COMPARISON: remove spaces and lowercase everything
+                        const cleanProgName = prog.trim().toLowerCase().replace(/\s/g, '');
+                        
+                        const progSlots = slots ? slots.filter(s => {
+                            const cleanSlotName = s.program.trim().toLowerCase().replace(/\s/g, '');
+                            return cleanSlotName === cleanProgName && s.status === 'active';
+                        }) : [];
+
+                        return `
+                            <div class="program-card reveal active">
+                                <div class="prog-name">${prog}</div>
+                                <div class="slots-list">
+                                    ${progSlots.length > 0 ? progSlots.map(s => `
+                                        <div class="slot-item">
+                                            <span class="slot-day">${s.day_of_week}</span>
+                                            <span class="slot-time">${formatTime(s.start_time)} - ${formatTime(s.end_time)}</span>
+                                        </div>
+                                    `).join('') : '<p style="color:#444; font-style:italic; padding: 10px 0;">Schedule being updated. Contact office for slots.</p>'}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (err) {
+                console.error("Critical Error:", err);
+                // Don't redirect immediately so you can see errors in console
+            }
+        }
+
+        function openAdmissionModal() {
+            const select = document.getElementById('modalSelect');
+            if (currentCenter && currentCenter.disciplines) {
+                select.innerHTML = currentCenter.disciplines.map(d => `<option value="${d}">${d}</option>`).join('');
+                document.getElementById('admissionModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() { 
+            document.getElementById('admissionModal').style.display = 'none'; 
+            document.body.style.overflow = 'auto';
+        }
+
+        function goToAdmission() {
+            const prog = document.getElementById('modalSelect').value;
+            window.location.href = `../admission/index.html?center=${encodeURIComponent(currentCenter.name)}&program=${encodeURIComponent(prog)}`;
+        }
+
+        document.getElementById('hamburger').onclick = () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        };
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

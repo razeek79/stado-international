@@ -1,0 +1,206 @@
+
+/* Hero Section */
+.hero {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 100px 20px;
+    background: var(--bg-offwhite);
+}
+
+.hero-logo { width: 120px; margin-bottom: 30px; opacity: 0.8; }
+.hero h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); line-height: 1.1; margin-bottom: 20px; }
+.hero p { max-width: 600px; font-size: 1.1rem; color: var(--text-grey); margin-bottom: 40px; }
+
+/* Signature Program Section */
+.signature-section {
+    position: relative;
+    width: 100%;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    background: url('/images/program-cards-imgs/wellness.webp') center/cover no-repeat;
+    padding: 80px 5%;
+}
+
+/* Dark Overlay */
+.signature-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.signature-content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    max-width: 600px;
+}
+
+.signature-content h2 { color: white; margin-bottom: 20px; font-size: clamp(2rem, 5vw, 3.5rem); }
+.signature-content p { margin-bottom: 30px; font-size: 1.1rem; opacity: 0.9; }
+
+/* Rounded Button Override for Section */
+.signature-content .btn { border-radius: 50px; }
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .signature-section { justify-content: center; text-align: center; }
+    .signature-content { width: 100%; }
+    .signature-content .btn{
+        display:inline-flex;
+        margin:auto;
+    }
+}
+
+/* Institutional Section */
+.institutional-section {
+    position: relative;
+    width: 100%;
+    min-height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Text aligned to right */
+    background: url('/images/program-cards-imgs/school.webp') center/cover no-repeat;
+    padding: 80px 5%;
+}
+
+/* Dark overlay */
+.institutional-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.institutional-content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    max-width: 550px;
+    text-align: right; /* Right alignment for desktop */
+}
+
+.institutional-content h2 { color: white; margin-bottom: 20px; font-size: clamp(2rem, 5vw, 3rem); }
+.institutional-content p { margin-bottom: 30px; font-size: 1.1rem; opacity: 0.9; }
+.institutional-content .btn {border-radius: 50px;}
+/* Desktop Right Alignment */
+@media (min-width: 769px) {
+    .institutional-section { justify-content: flex-end; }
+    .btn-group-right { display: flex; justify-content: flex-end; gap: 15px; }
+}
+
+/* Mobile Compact Layout */
+@media (max-width: 768px) {
+    .institutional-section { justify-content: center; text-align: center; }
+    .institutional-content { text-align: center; }
+    .btn-group-right { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+}
+
+.divider {
+    background-color: var(--primary-red);
+    padding: 2px;
+}
+
+/* STADO Centers Section */
+.centers-section {
+    position: relative;
+    width: 100%;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    background: url('/images/program-cards-imgs/centers.png') center/cover no-repeat;
+    padding: 80px 5%;
+}
+
+.centers-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Consistent dark overlay */
+}
+
+.centers-content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    max-width: 600px;
+}
+
+.centers-content h2 { color: white; margin-bottom: 20px; font-size: clamp(2rem, 5vw, 3rem); }
+.centers-content p { margin-bottom: 30px; font-size: 1.1rem; opacity: 0.9; }
+
+/* Rounded Button Override */
+.centers-content .btn { border-radius: 50px; }
+
+@media (max-width: 768px) {
+    .centers-section { justify-content: center; text-align: center; }
+    .centers-content { width: 100%; }
+    .centers-content .btn {margin: auto; display: block;}
+}
+
+/* Core Programs - Light Premium Grid */
+.programs-section {
+    padding: 100px 5%;
+    background-color: var(--bg-white);
+}
+
+.programs-section h2 { color: var(--text-dark); }
+.programs-section p { color: var(--text-grey); }
+
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.program-card {
+    background-color: var(--bg-dark);
+    position: relative;
+    border-radius: 20px;
+    padding: 20px; /* Padding for inner content */
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    overflow: hidden;
+    transition: var(--transition);
+    background-size: cover;
+    height: 500px;
+    background-position: center;
+}
+
+/* Dark overlay to make text pop on the background image */
+.program-card::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, #00000000 100%);
+    z-index: 1;
+    border-radius: 20px;
+}
+
+.program-card h3, .program-card .btn {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+}
+
+.program-card h3 { margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+/* Hover Effect */
+.program-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .programs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .programs-grid { grid-template-columns: 1fr; }
+}

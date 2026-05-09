@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO SCALABLE META -->
+    <title>Boxing Training | Combat Sports & Conditioning | STADO International</title>
+    <meta name="description" content="Professional Boxing training at STADO. Master punch combinations, footwork, and bag work. Build speed, strength, and mental toughness.">
+    <link rel="canonical" href="https://stadointernational.in/programs/boxing/">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/programs-pages.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="../../images/stado_emblem_compressed.png" alt="STADO Logo">
+                <span class="logo-text">STADO</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../centers-network.html">Centres</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="program-hero">
+            <div class="hero-content">
+                <p class="hero-tagline">STADO International Academy</p>
+                <h1>Boxing</h1>
+                <a href="#find" class="btn btn-primary" style="margin-top: 30px; padding: 18px 45px;">Find a Centre</a>
+            </div>
+        </section>
+
+        <!-- CONTENT -->
+        <section class="content-section">
+            <!-- DEFINITION -->
+            <div class="intro-card">
+                Boxing is a combat sport focused on punching techniques, defense, and conditioning.
+            </div>
+
+            <div class="section-grid">
+                <!-- TRAINING -->
+                <div class="glass-card">
+                    <h2>Training Approach</h2>
+                    <p style="color: #bbb; line-height: 1.6;">Our boxing program emphasizes tactical precision and peak physical readiness:</p>
+                    <ul style="padding-left: 20px; color: var(--primary-red); font-weight: 600;">
+                        <li>Punch combinations</li>
+                        <li>Footwork and defense drills</li>
+                        <li>Heavy bag and pad work</li>
+                        <li>High-intensity conditioning</li>
+                    </ul>
+                </div>
+
+                <!-- PROGRESSION -->
+                <div class="glass-card">
+                    <h2>Progression</h2>
+                    <p>Skill development is tracked across three core pillars of performance:</p>
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px 20px; border-left: 3px solid var(--primary-red);">Technical Precision</div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px 20px; border-left: 3px solid var(--primary-red);">Endurance & Stamina</div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px 20px; border-left: 3px solid var(--primary-red);">Reflex & Reaction</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-grid">
+                <!-- TESTING -->
+                <div class="glass-card">
+                    <h2>Testing & Evaluation</h2>
+                    <p>Regular skill assessments and supervised sparring sessions ensure students meet the required safety and technical standards.</p>
+                </div>
+                <!-- COMPETITIONS -->
+                <div class="glass-card">
+                    <h2>Competitions</h2>
+                    <p>Opportunities range from amateur local bouts to official Inter-Dojo competitions for qualified athletes.</p>
+                </div>
+            </div>
+
+            <div class="glass-card" style="margin-top: 30px; text-align: center;">
+                <h2>The Benefits</h2>
+                <p>Training in boxing builds immense strength, stamina, and speed, while significantly enhancing mental toughness and self-discipline.</p>
+            </div>
+        </section>
+
+        <!-- DYNAMIC SEARCH -->
+        <section id="find" class="content-section" style="background: linear-gradient(to bottom, transparent, rgba(165,28,48,0.05)); border-radius: 60px 60px 0 0;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 3rem;">Find a Dojo</h2>
+                
+                <div class="search-container">
+                    <input type="text" id="citySearch" placeholder="Search by city or town..." autocomplete="off">
+                    <button id="gpsBtn" class="gps-btn-premium">Nearest to Me</button>
+                    <div id="suggestionBox" class="suggestion-box-premium" style="display: none;"></div>
+                </div>
+                <p id="locationStatus" style="font-size: 0.8rem; opacity: 0.5;"></p>
+            </div>
+
+            <div id="centerResults" class="section-grid">
+                <div class="glass-card" style="height: 250px; opacity: 0.1;"></div>
+                <div class="glass-card" style="height: 250px; opacity: 0.1;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const programName = "Boxing"; 
+            let allCenters = [];
+            let debounceTimer;
+
+            async function init() {
+                if (!window.supabaseClient) return;
+                const { data, error } = await window.supabaseClient
+                    .from('centers')
+                    .select('*')
+                    .eq('status', 'active')
+                    .contains('disciplines', [programName]);
+
+                if (!error) {
+                    allCenters = data;
+                    render(allCenters);
+                }
+            }
+
+            function render(data) {
+                const grid = document.getElementById('centerResults');
+                if (!data.length) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No Boxing centres found in this area.</p>';
+                    return;
+                }
+                grid.innerHTML = data.map(c => `
+                    <div class="glass-card center-card-premium">
+                        <div class="brand">STADO INTERNATIONAL</div>
+                        <h3>${c.city} CENTER</h3>
+                        <a href="../../center/index.html?id=${c.id}" class="btn btn-primary" style="width: 100%; border-radius: 50px;">View Schedules</a>
+                    </div>
+                `).join('');
+            }
+
+            // Real Place Suggestions (Photon API)
+            const input = document.getElementById('citySearch');
+            const suggestions = document.getElementById('suggestionBox');
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const val = e.target.value.trim();
+                if (val.length < 3) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(async () => {
+                    const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5&lat=10.85&lon=76.27`);
+                    const data = await res.json();
+                    showSuggestions(data.features);
+                }, 300);
+            });
+
+            function showSuggestions(features) {
+                suggestions.style.display = 'block';
+                suggestions.innerHTML = features.map(f => `
+                    <div class="suggestion-item" onclick="selectLocation(${f.geometry.coordinates[1]}, ${f.geometry.coordinates[0]}, '${f.properties.name}')">
+                        <span style="color:#fff; font-weight:600;">${f.properties.name}</span><br>
+                        <span style="color:#888; font-size:0.75rem;">${f.properties.city || ''} ${f.properties.state || ''}, India</span>
+                    </div>
+                `).join('');
+            }
+
+            window.selectLocation = (lat, lon, name) => {
+                input.value = name;
+                suggestions.style.display = 'none';
+                sortCenters(lat, lon);
+            };
+
+            function sortCenters(lat, lon) {
+                const sorted = [...allCenters].sort((a, b) => {
+                    const d1 = Math.sqrt(Math.pow(a.latitude - lat, 2) + Math.pow(a.longitude - lon, 2));
+                    const d2 = Math.sqrt(Math.pow(b.latitude - lat, 2) + Math.pow(b.longitude - lon, 2));
+                    return d1 - d2;
+                });
+                render(sorted);
+            }
+
+            document.getElementById('gpsBtn').addEventListener('click', () => {
+                navigator.geolocation.getCurrentPosition(p => {
+                    sortCenters(p.coords.latitude, p.coords.longitude);
+                    document.getElementById('locationStatus').innerText = "Sorted by distance from your location.";
+                });
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.search-container')) suggestions.style.display = 'none';
+            });
+
+            init();
+        });
+    </script>
+</body>
+</html>

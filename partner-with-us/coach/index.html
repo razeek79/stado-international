@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Partner Application | STADO International</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/partner-with-us.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../config.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #0071E3;
+            --disabled-gray: #d2d2d7;
+            --studio-bg: #F5F5F7;
+            --border-soft: rgba(0,0,0,0.1);
+        }
+
+        body { background: var(--studio-bg); color: #1d1d1f; margin: 0; font-family: 'Montserrat', sans-serif; }
+        .apply-wrapper { max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: stepFade 0.4s ease-out; }
+
+        @keyframes stepFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-input {
+            width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-soft);
+            background: #fff; font-size: 1rem; margin-top: 8px; outline: none;
+            transition: 0.2s; box-sizing: border-box;
+        }
+
+        .label-text { font-size: 0.85rem; font-weight: 700; color: #6e6e73; text-transform: uppercase; margin-left: 5px; }
+
+        .discipline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 15px; }
+        .tag-select {
+            padding: 12px; border-radius: 12px; background: #fff; border: 1px solid var(--border-soft);
+            text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+        }
+        .tag-select.selected { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+
+        #sig-canvas { background: #fff; border: 1px dashed var(--border-soft); border-radius: 16px; width: 100%; height: 220px; touch-action: none; }
+
+        .step-dots { display: flex; gap: 8px; margin-bottom: 40px; justify-content: center; }
+        .step-dot { width: 40px; height: 4px; background: var(--disabled-gray); border-radius: 10px; }
+        .step-dot.active { background: var(--primary-blue); }
+
+        /* Unified Button Logic */
+        .btn-step-nav { background: var(--disabled-gray); color: #86868b; cursor: not-allowed; border: none; padding: 18px; border-radius: 50px; font-weight: 700; width: 100%; }
+        .btn-step-nav.ready { background: var(--primary-blue); color: #fff; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3); }
+        
+        .type-selector { display: flex; gap: 15px; margin-top: 10px; }
+        .type-card { flex: 1; padding: 20px; border-radius: 16px; border: 1px solid var(--border-soft); background: #fff; cursor: pointer; text-align: center; }
+        .type-card.selected { border-color: var(--primary-blue); background: rgba(0, 113, 227, 0.05); }
+    </style>
+</head>
+<body>
+
+    <main class="apply-wrapper">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <img src="../../../images/stado_emblem_compressed.png" width="45">
+            <h1 style="font-size: 2.2rem; margin-top: 20px;">Coach Application</h1>
+        </div>
+
+        <div class="step-dots">
+            <div class="step-dot active"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+        </div>
+
+        <form id="coachForm">
+            <!-- STEP 1 -->
+            <div class="form-step active" id="step1">
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="label-text">Partner Type *</span>
+                    <div class="type-selector">
+                        <div class="type-card selected" onclick="selectType('individual', this)">
+                            <h3>Individual</h3>
+                        </div>
+                        <div class="type-card" onclick="selectType('team_leader', this)">
+                            <h3>Team Leader</h3>
+                        </div>
+                    </div>
+                    <input type="hidden" name="type" id="partnerType" value="individual">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Full Name *</span>
+                    <input type="text" name="name" class="glass-input req-1">
+                </div>
+
+                <div id="teamNameGroup" style="display: none; margin-bottom: 20px;">
+                    <span class="label-text">Team Name *</span>
+                    <input type="text" name="team_name" id="teamInput" class="glass-input">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Email *</span>
+                    <input type="email" name="email" class="glass-input req-1">
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Phone *</span>
+                    <input type="tel" name="phone" class="glass-input req-1">
+                </div>
+
+                <button type="button" id="next1" class="btn-step-nav" disabled onclick="nextStep(2)">Continue</button>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="form-step" id="step2">
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <span class="label-text">Disciplines *</span>
+                    <div class="discipline-grid" id="discGrid">
+                        <div class="tag-select" data-val="Karate">Karate</div>
+                        <div class="tag-select" data-val="Kung Fu">Kung Fu</div>
+                        <div class="tag-select" data-val="Kickboxing">Kickboxing</div>
+                        <div class="tag-select" data-val="Yoga">Yoga</div>
+                        <div class="tag-select" data-val="Zumba">Zumba</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">City *</span>
+                    <input type="text" name="city" class="glass-input req-2">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Experience & Bio *</span>
+                    <textarea name="experience" class="glass-input req-2" rows="3"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn-round" style="flex:1; background:#fff; border:1px solid #ddd;" onclick="nextStep(1)">Back</button>
+                    <button type="button" id="next2" class="btn-step-nav" disabled onclick="nextStep(3)">Next</button>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="form-step" id="step3">
+                <div style="background:#fff; padding:20px; border-radius:16px; border:1px solid var(--border-soft); font-size:0.8rem; height:150px; overflow-y:auto; margin-bottom:20px;">
+                    <p>I confirm that all information provided is accurate and I agree to STADO's professional training standards.</p>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <input type="checkbox" id="agreeCheck" style="width: 20px; height: 20px;">
+                    <label for="agreeCheck">I agree to the terms</label>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Digital Signature *</span>
+                    <canvas id="sig-canvas"></canvas>
+                    <button type="button" onclick="clearSig()" style="background:none; border:none; color:var(--primary-blue); font-size:0.7rem; font-weight:700;">CLEAR</button>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" class="btn-round" style="flex:1; background:#fff; border:1px solid #ddd;" onclick="nextStep(2)">Back</button>
+                    <button type="submit" id="submitBtn" class="btn-step-nav" disabled>Submit</button>
+                </div>
+                <div id="statusMsg" style="margin-top:15px;"></div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        const sb = window.supabaseClient;
+        let selectedDiscs = [];
+        let isDrawing = false;
+        const canvas = document.getElementById('sig-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function nextStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            const dots = document.querySelectorAll('.step-dot');
+            dots.forEach((d, i) => i < step ? d.classList.add('active') : d.classList.remove('active'));
+            if(step === 3) resizeCanvas();
+        }
+
+        function selectType(type, el) {
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('partnerType').value = type;
+            document.getElementById('teamNameGroup').style.display = type === 'team_leader' ? 'block' : 'none';
+            validateStep(1);
+        }
+
+        document.getElementById('discGrid').addEventListener('click', (e) => {
+            if(e.target.classList.contains('tag-select')) {
+                const val = e.target.dataset.val;
+                if(selectedDiscs.includes(val)) {
+                    selectedDiscs = selectedDiscs.filter(d => d !== val);
+                    e.target.classList.remove('selected');
+                } else {
+                    selectedDiscs.push(val);
+                    e.target.classList.add('selected');
+                }
+                validateStep(2);
+            }
+        });
+
+        // REUSABLE VALIDATION ENGINE
+        function validateStep(step) {
+            const btn = document.getElementById(step === 3 ? 'submitBtn' : `next${step}`);
+            if(!btn) return;
+
+            let isValid = true;
+
+            if(step === 1) {
+                document.querySelectorAll('.req-1').forEach(i => { if(!i.value.trim()) isValid = false; });
+                if(document.getElementById('partnerType').value === 'team_leader' && !document.getElementById('teamInput').value.trim()) isValid = false;
+            } else if(step === 2) {
+                document.querySelectorAll('.req-2').forEach(i => { if(!i.value.trim()) isValid = false; });
+                if(selectedDiscs.length === 0) isValid = false;
+            } else if(step === 3) {
+                const hasSig = !ctx.getImageData(0,0,canvas.width,canvas.height).data.every(v => v === 0);
+                const agree = document.getElementById('agreeCheck').checked;
+                isValid = hasSig && agree;
+            }
+
+            btn.disabled = !isValid;
+            isValid ? btn.classList.add('ready') : btn.classList.remove('ready');
+        }
+
+        document.querySelectorAll('input, textarea').forEach(i => {
+            i.addEventListener('input', () => { validateStep(1); validateStep(2); });
+        });
+        document.getElementById('agreeCheck').addEventListener('change', () => validateStep(3));
+
+        // SIGNATURE PAD
+        function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+        function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); validateStep(3); }
+        const getPos = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        };
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); });
+        canvas.addEventListener('mousemove', (e) => { if(!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.lineWidth = 2.5; ctx.stroke(); });
+        canvas.addEventListener('mouseup', () => { isDrawing = false; validateStep(3); });
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); });
+        canvas.addEventListener('touchmove', (e) => { if(!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); });
+        canvas.addEventListener('touchend', () => { isDrawing = false; validateStep(3); });
+
+        // SUBMISSION HANDLER
+        document.getElementById('coachForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('statusMsg');
+            
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            try {
+                const f = e.target;
+
+                // 1. Capture IP Address (Using a public API)
+                let ipAddr = "0.0.0.0";
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    ipAddr = ipData.ip;
+                } catch (ipErr) {
+                    console.error("IP Fetch failed:", ipErr);
+                }
+
+                // 2. Capture User Agent
+                const userAgentString = navigator.userAgent;
+
+                // 3. Signature Upload
+                const blob = await new Promise(res => canvas.toBlob(res));
+                const fileName = `sig_${Date.now()}.png`;
+                await sb.storage.from('center-signatures').upload(`coach-signatures/${fileName}`, blob);
+                const { data: { publicUrl } } = sb.storage.from('center-signatures').getPublicUrl(`coach-signatures/${fileName}`);
+
+                // 4. Final Insert with ALL fields
+                const { error } = await sb.from('coach_applications').insert([{
+                    name: f.name.value,
+                    email: f.email.value,
+                    phone: f.phone.value,
+                    type: f.type.value,
+                    disciplines: selectedDiscs,
+                    experience: f.experience.value,
+                    city: f.city.value,
+                    team_name: f.team_name.value || null,
+                    signature_url: publicUrl,
+                    ip_address: ipAddr,        // Now correctly mapped
+                    user_agent: userAgentString // Now correctly mapped
+                }]);
+
+                if (error) throw error;
+
+                // Success UI
+                document.querySelector('.apply-wrapper').innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px;">
+                        <h2 style="color:var(--primary-blue);">Application Submitted!</h2>
+                        <p>We have received your application. Our team will review your credentials and contact you shortly.</p>
+                    </div>`;
+                    
+            } catch (err) {
+                console.error(err);
+                msg.innerHTML = `<p style="color:red; font-size:0.85rem;">Error: ${err.message}</p>`;
+                btn.disabled = false;
+                btn.innerText = "Submit";
+            }
+        });
+    </script>
+</body>
+</html>

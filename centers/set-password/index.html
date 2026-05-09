@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Your Account | STADO</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="premium-card">
+            <h2>Set Password</h2>
+            <p style="color:var(--text-dim); margin-bottom:25px;">Create a secure password for future logins.</p>
+            
+            <div class="form-group">
+                <span class="label-text">New Password</span>
+                <input type="password" id="newPass" class="glass-input">
+            </div>
+            <button onclick="handlePassUpdate()" class="btn-premium">Save & Continue</button>
+            <div id="error" style="color:red; margin-top:15px; font-size:0.8rem;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function savePassword() {
+            const newPass = document.getElementById('passwordInput').value;
+            
+            // Update Password AND Metadata simultaneously
+            const { error } = await sb.auth.updateUser({ 
+                password: newPass,
+                data: { has_password: true } 
+            });
+
+            if(!error) {
+                alert("Account secured!");
+                location.href = '../dashboard/';
+            } else {
+                alert(error.message);
+            }
+        }
+
+        async function handlePassUpdate() {
+            const password = document.getElementById('newPass').value;
+            if(password.length < 6) {
+                document.getElementById('error').innerText = "Password must be at least 6 characters.";
+                return;
+            }
+            const { error } = await window.supabaseClient.auth.updateUser({ password });
+            if (error) document.getElementById('error').innerText = error.message;
+            else location.href = '../dashboard/';
+        }
+    </script>
+</body>
+</html>

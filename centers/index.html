@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STADO Centres | Find Official Training Centres Near You</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        :root {
+            --bright-silver: #F5F5F7;
+            --glass-white: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --primary-red: #A51C30;
+        }
+
+        body { 
+            background-color: #000; 
+            color: var(--bright-silver); 
+            background-attachment: fixed; 
+            background-size: cover; 
+            background-position: center; 
+        }
+        
+        @media (min-width: 1025px) { body { background-image: url('../images/bg-images/centers-bg-lap.png'); } }
+        @media (max-width: 1024px) { body { background-image: url('../images/bg-images/centers-bg-tab.webp'); } }
+        @media (max-width: 600px) { body { background-image: url('../images/bg-images/centers-bg-mob.png'); } }
+
+        /* FAST LOAD: Hero visible instantly */
+        .hero-centers { min-height: 50vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 5% 40px; }
+        .hero-content h1 { font-size: clamp(3rem, 9vw, 5.5rem); color: #fff; margin-bottom: 15px; font-family: var(--font-heading); text-transform: uppercase; }
+        .hero-content p { color: var(--bright-silver); max-width: 650px; margin: 0 auto 35px; opacity: 0.8; font-size: 1.1rem; }
+
+        /* Performance Optimized Reveals */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(20px); 
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            will-change: opacity, transform; 
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Skeleton Loading Animation */
+        .skeleton-card {
+            height: 350px;
+            background: linear-gradient(90deg, var(--glass-white) 25%, rgba(255,255,255,0.1) 50%, var(--glass-white) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-pulse 1.5s infinite;
+            border-radius: 20px;
+        }
+        @keyframes skeleton-pulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Program Cards Carousel */
+
+        .programs-grid { display: flex; gap: 20px; overflow-x: auto; padding: 20px 5%; scroll-snap-type: x mandatory; scrollbar-width: none; }
+
+        .programs-grid::-webkit-scrollbar { display: none; }
+
+        .pg-card {
+
+            min-width: 260px; height: 380px; border-radius: 20px;
+
+            background-size: cover; background-position: center; position: relative;
+
+            scroll-snap-align: start; border: 1px solid var(--glass-border);
+
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); overflow: hidden; background-color: var(--glass-white);
+
+            backdrop-filter: blur(4px);
+
+        }
+
+        .pg-card:hover { transform: translateY(-10px); border-color: var(--primary-red); }
+
+        .pg-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 10%, transparent 60%); z-index: 1; }
+
+        .pg-content { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px; z-index: 2; }
+
+        .pg-content h3 { color: #fff; font-family: var(--font-heading); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .pg-content p { font-size: 0.8rem; margin-bottom: 15px; opacity: 0.7; }
+
+        .btn-sm { display: inline-block; padding: 10px 22px; background: var(--primary-red); color: #fff; border-radius: 50px; text-transform: uppercase; font-size: 0.7rem; font-family: var(--font-heading); letter-spacing: 1px; }
+
+        /* Search Controls */
+        .controls-section { padding: 40px 5% 10px; max-width: 1000px; margin: auto; text-align: center; position: relative; z-index: 100; }
+        .search-container {
+            display: flex; background: rgba(255, 255, 255, 0.08); 
+            padding: 8px; border-radius: 60px; border: 1px solid var(--glass-border); 
+            backdrop-filter: blur(30px); align-items: center; gap: 5px;
+            position: relative; margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .search-icon-wrapper { padding-left: 20px; display: flex; align-items: center; color: var(--primary-red); }
+        .search-wrapper { flex: 2; position: relative; display: flex; align-items: center; }
+        input#citySearch { width: 100%; background: none; border: none; color: #fff; padding: 12px 10px; outline: none; font-family: var(--font-body); font-size: 1rem; }
+
+        #suggestionBox {
+            display: none; position: absolute; top: calc(100% + 10px); left: 0; width: 100%;
+            background: rgba(15, 15, 15, 0.95); border: 1px solid var(--glass-border);
+            border-radius: 18px; z-index: 2000; box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            max-height: 320px; overflow-y: auto; backdrop-filter: blur(25px);
+        }
+        .suggestion-item { 
+            padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            text-align: left; display: flex; align-items: flex-start; gap: 15px;
+        }
+        .suggestion-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .place-name { color: #fff; font-weight: 600; font-size: 0.95rem; }
+        .place-sub { color: #888; font-size: 0.75rem; margin-top: 2px; }
+
+        select#programFilter { 
+            background: transparent; color: #fff; border: none; 
+            border-left: 1px solid var(--glass-border); padding: 0 25px; outline: none; 
+            cursor: pointer; font-family: var(--font-body); min-width: 180px;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        select option { background: #111; }
+
+        .gps-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent; border: 1px solid var(--glass-border);
+            padding: 12px 30px; border-radius: 50px; color: #fff;
+            font-family: var(--font-heading); font-size: 0.8rem; letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .gps-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+        /* Centers Grid - Row Height Equalization */
+        .centers-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 25px; 
+            padding: 40px 5% 100px; 
+            max-width: 1400px; 
+            margin: auto; 
+            position: relative; 
+            z-index: 10; 
+        }
+
+        .c-card { 
+            background: var(--glass-white); 
+            border: 1px solid var(--glass-border); 
+            padding: 35px; 
+            border-radius: 20px; 
+            backdrop-filter: blur(4px); 
+            transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            display: flex;
+            flex-direction: column;
+            height: auto; /* Shrink to content in mobile */
+        }
+        .c-card:hover { border-color: var(--primary-red); transform: translateY(-5px); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+
+        .card-brand-small { 
+            font-size: 0.65rem; 
+            font-weight: 400; 
+            letter-spacing: 2.5px; 
+            color: #888; 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+        }
+        .card-title-city { 
+            font-family: var(--font-heading); 
+            font-size: 1.8rem; 
+            color: #fff; 
+            text-transform: uppercase; 
+            line-height: 1.1; 
+            margin-bottom: 12px; 
+        }
+        .card-location-link { 
+            font-size: 0.75rem; 
+            color: var(--primary-red); 
+            text-decoration: none; 
+            font-weight: 600; 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+        .card-location-link:hover { text-decoration: underline; }
+
+        .badge-box { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            margin-bottom: 25px;
+            flex-grow: 1; /* Pushes button to bottom while maintaining row height */
+        }
+        .badge { 
+            background: rgba(255,255,255,0.06); 
+            padding: 5px 12px; 
+            border-radius: 4px; 
+            font-size: 0.65rem; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            color: #ccc; 
+            height: fit-content;
+        }
+
+        /* Restored Original Round Button Style */
+        .btn-explore { 
+            width: 100%; 
+            text-align: center; 
+            padding: 16px 32px; 
+            font-size: 0.8rem; 
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: var(--primary-red);
+            color: #fff;
+            border-radius: 50px; /* Pill shape */
+            border: 1px solid var(--primary-red);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            display: inline-block;
+        }
+        .btn-explore:hover { background: #871626; border-color: #871626; }
+
+        @media (max-width: 768px) {
+            .search-container { flex-direction: column; border-radius: 25px; padding: 15px; }
+            .search-wrapper { border-bottom: 1px solid var(--glass-border); width: 100%; padding-bottom: 10px; }
+            .search-icon-wrapper { display: none; }
+            select#programFilter { border: none; padding: 15px 0; width: 100%; text-align: center; border-left: none; }
+            .hero-centers { padding-top: 150px; }
+            .centers-grid { grid-template-columns: 1fr; }
+            .c-card { min-height: auto; } /* No extra height in mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="../images/stado_emblem_compressed.png" alt="STADO">
+                <span class="logo-text">STADO</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="index.html" class="active">Centres</a></li>
+            </ul>
+            <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('active')">☰</div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-centers">
+            <div class="hero-content">
+                <h1>Official Centres</h1>
+                <p>Discover the STADO network. Premium training environments engineered for martial arts, wellness, and elite performance.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="#find" class="btn btn-primary">Find Nearby Centres</a>
+                    <a href="../partner-with-us/index.html" class="btn btn-outline" style="color: #fff; border-color: #fff;">Partner With Us</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Program Carousel -->
+
+        <section class="programs-section">
+
+            <div class="programs-grid">
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/karate.webp')"><div class="pg-content"><h3>Karate</h3><p>Power & Discipline</p><a href="../programs/karate/" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kungfu.webp')"><div class="pg-content"><h3>Kung Fu</h3><p>Mastery & Flow</p><a href="../programs/kungfu/" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kalari.webp')"><div class="pg-content"><h3>Kalari</h3><p>Ancient Tradition</p><a href="../kalari/index.html" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/kickboxing.webp')"><div class="pg-content"><h3>Kickboxing</h3><p>Strike & Speed</p><a href="../kickboxing/index.html" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/wushu.webp')"><div class="pg-content"><h3>Wushu</h3><p>Art of Combat</p><a href="../wushu/index.html" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/yoga.webp')"><div class="pg-content"><h3>Yoga</h3><p>Balance & Wellness</p><a href="../yoga/index.html" class="btn-sm">Learn More</a></div></div>
+
+                <div class="pg-card reveal" style="background-image: url('../images/program-cards-imgs/zumba.webp')"><div class="pg-content"><h3>Zumba</h3><p>Rhythm & Energy</p><a href="../zumba/index.html" class="btn-sm">Learn More</a></div></div>
+
+            </div>
+
+        </section>
+
+        <section id="find" class="controls-section reveal">
+            <div class="search-container">
+                <div class="search-icon-wrapper">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                <div class="search-wrapper">
+                    <input type="text" id="citySearch" placeholder="Search for any city or town..." autocomplete="off">
+                    <div id="suggestionBox"></div>
+                </div>
+                <select id="programFilter">
+                    <option value="All">All Programs</option>
+                    <option value="Karate">Karate</option>
+                    <option value="Kung Fu">Kung Fu</option>
+                    <option value="Kalari">Kalari</option>
+                    <option value="Kickboxing">Kickboxing</option>
+                    <option value="Wushu">Wushu</option>
+                    <option value="Yoga">Yoga</option>
+                    <option value="Zumba">Zumba</option>
+                </select>
+            </div>
+            <button id="gpsBtn" class="gps-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Find Nearest to Me
+            </button>
+            <p id="locationStatus"></p>
+        </section>
+
+        <div id="centersGrid" class="centers-grid"></div>
+    </main>
+
+    <script src="../config.js"></script>
+    <script>
+        let allCenters = [];
+        let debounceTimer;
+
+        function showSkeletons() {
+            const grid = document.getElementById('centersGrid');
+            grid.innerHTML = Array(6).fill('<div class="skeleton-card"></div>').join('');
+        }
+
+        async function getSupabase() {
+            return new Promise((resolve) => {
+                const check = setInterval(() => {
+                    if (window.supabaseClient) {
+                        clearInterval(check);
+                        resolve(window.supabaseClient);
+                    }
+                }, 50);
+            });
+        }
+
+        async function init() {
+            showSkeletons();
+            const supabase = await getSupabase();
+            const { data, error } = await supabase.from('centers').select('*').eq('status', 'active');
+            if (!error) {
+                allCenters = data;
+                requestAnimationFrame(() => {
+                    renderCenters(allCenters);
+                    setupControls();
+                });
+            }
+        }
+
+        function renderCenters(data) {
+            const grid = document.getElementById('centersGrid');
+            if (!data.length) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">No centres match your search.</p>';
+                return;
+            }
+            grid.innerHTML = data.map(c => `
+                <div class="c-card reveal">
+                    <div class="card-brand-small">STADO INTERNATIONAL</div>
+                    <div class="card-title-city">${c.city} Centre</div>
+                    <a href="${c.google_maps_url || '#'}" target="_blank" class="card-location-link">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        View Location
+                    </a>
+                    <div class="badge-box">
+                        ${c.disciplines.map(d => `<span class="badge">${d}</span>`).join('')}
+                    </div>
+                    <a href="../center/index.html?id=${c.id}" class="btn-explore">Explore Centre</a>
+                </div>
+            `).join('');
+            initReveal();
+        }
+
+        function setupControls() {
+            const input = document.getElementById('citySearch');
+            const suggestions = document.getElementById('suggestionBox');
+            const filter = document.getElementById('programFilter');
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const val = e.target.value.trim();
+                if (val.length < 3) return suggestions.style.display = 'none';
+
+                debounceTimer = setTimeout(async () => {
+                    const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5&lat=10.8505&lon=76.2711`);
+                    const data = await res.json();
+                    showSuggestions(data.features);
+                }, 300);
+            });
+
+            filter.addEventListener('change', (e) => {
+                const val = e.target.value;
+                const filtered = val === 'All' ? allCenters : allCenters.filter(c => c.disciplines.includes(val));
+                renderCenters(filtered);
+            });
+        }
+
+        function showSuggestions(features) {
+            const box = document.getElementById('suggestionBox');
+            box.style.display = 'block';
+            box.innerHTML = features.map(f => `
+                <div class="suggestion-item" onclick="selectLocation(${f.geometry.coordinates[1]}, ${f.geometry.coordinates[0]}, '${f.properties.name}')">
+                    <span style="color:#fff; font-weight:600;">📍 ${f.properties.name || ''}</span><br>
+                    <span style="color:#888; font-size:0.7rem;">${f.properties.city || ''} ${f.properties.state || ''}, India</span>
+                </div>
+            `).join('');
+        }
+
+        window.selectLocation = (lat, lon, name) => {
+            document.getElementById('citySearch').value = name;
+            document.getElementById('suggestionBox').style.display = 'none';
+            sortCenters(lat, lon);
+        };
+
+        function sortCenters(lat, lon) {
+            const sorted = [...allCenters].sort((a, b) => {
+                const d1 = calcDist(lat, lon, a.latitude, a.longitude);
+                const d2 = calcDist(lat, lon, b.latitude, b.longitude);
+                return d1 - d2;
+            });
+            renderCenters(sorted);
+        }
+
+        function calcDist(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function initReveal() {
+            const observer = new IntersectionObserver(es => {
+                es.forEach(e => { if(e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); } });
+            }, { threshold: 0.05, rootMargin: "50px" });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        document.getElementById('gpsBtn').addEventListener('click', () => {
+            document.getElementById('locationStatus').innerText = "Locating...";
+            navigator.geolocation.getCurrentPosition((pos) => {
+                sortCenters(pos.coords.latitude, pos.coords.longitude);
+                document.getElementById('locationStatus').innerText = "Nearest centres found.";
+            });
+        });
+
+        document.addEventListener('click', e => { if(!e.target.closest('.search-wrapper')) document.getElementById('suggestionBox').style.display='none'; });
+        init();
+    </script>
+</body>
+</html>

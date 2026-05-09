@@ -1,0 +1,213 @@
+/* programs-pages.css */
+:root {
+    --primary-red: #A51C30;
+    --glass-white: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text-silver: #F5F5F7;
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: #000;
+    color: var(--text-silver);
+    font-family: var(--font-body);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Premium Hero Section */
+.program-hero {
+    height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.program-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%);
+    z-index: 1;
+}
+
+/* Universal Background Rule */
+@media (min-width: 1025px) {
+    .program-hero { background-image: url('../images/bg-images/programs-pages-bg-lap.webp'); }
+}
+@media (max-width: 1024px) {
+    .program-hero { background-image: url('../images/bg-images/programs-pages-bg-mob.webp'); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 5%;
+}
+
+.hero-content h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(3.5rem, 12vw, 6.5rem);
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.hero-tagline {
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    color: var(--primary-red);
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+/* Content Layout */
+.content-section {
+    padding: 80px 5%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.intro-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    border-left: 4px solid var(--primary-red);
+    padding: 40px;
+    margin-bottom: 50px;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    border-radius: 0 24px 24px 0;
+}
+
+.glass-card {
+    background: var(--glass-white);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 40px;
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-family: var(--font-heading);
+    color: #fff;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* Belt Progression & Tags */
+.belt-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.belt-tag {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+}
+
+/* Search UI */
+.search-container {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 10px;
+    border-radius: 100px;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    max-width: 600px;
+    margin: 40px auto;
+    position: relative;
+}
+
+.search-container input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+.suggestion-box-premium {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 100%;
+    background: rgba(15, 15, 15, 0.98);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    z-index: 1000;
+    max-height: 280px;
+    overflow-y: auto;
+    backdrop-filter: blur(25px);
+}
+
+.suggestion-item {
+    padding: 15px 25px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: left;
+}
+
+.suggestion-item:hover { background: rgba(255,255,255,0.05); }
+
+.gps-btn-premium {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 100px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Center Cards */
+.center-card-premium {
+    text-align: center;
+    padding: 45px 30px;
+}
+
+.center-card-premium .brand {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.center-card-premium h3 {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    color: var(--primary-red);
+    margin: 0 0 30px 0;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .intro-card { padding: 30px; font-size: 1.1rem; }
+    .search-container { flex-direction: column; border-radius: 20px; padding: 20px; }
+    .gps-btn-premium { margin-top: 15px; width: 100%; }
+}

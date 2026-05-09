@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre Login | STADO International</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="premium-card">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img src="../../images/stado_emblem_compressed.png" width="50" alt="STADO">
+                <h2 style="margin-top:15px; font-size: 1.5rem;">Centre Management</h2>
+            </div>
+
+            <!-- STEP 1: Email Entry -->
+            <div id="ui-email">
+                <div class="form-group">
+                    <span class="label-text">Business Email</span>
+                    <input type="email" id="email-in" class="glass-input" placeholder="name@centre.com">
+                </div>
+                <button onclick="window.checkAccount()" id="btn-check" class="btn-premium">Continue</button>
+            </div>
+
+            <!-- STEP 2A: First Time / Verification Required (Google/OTP) -->
+            <div id="ui-verify" style="display:none;">
+                <p id="verify-text" style="font-size:0.85rem; color:#666; margin-bottom:20px;">Identity verification required for this account.</p>
+                <button onclick="window.sendOTP()" class="btn-premium">Login with Email OTP</button>
+                <div style="margin:20px 0; text-align:center; color:#ccc; font-size:0.7rem;">OR</div>
+                <button onclick="window.loginGoogle()" style="width:100%; padding:12px; border-radius:50px; border:1px solid #ddd; background:#fff; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px;">
+                    <img src="https://www.google.com/favicon.ico" width="16"> Google Account
+                </button>
+                <p style="text-align:center; margin-top:20px;"><a href="#" onclick="location.reload()" style="font-size:0.8rem; color:#888;">Use different email</a></p>
+            </div>
+
+            <!-- STEP 2B: Returning User (Password Only) -->
+            <div id="ui-password" style="display:none;">
+                <div class="form-group">
+                    <span class="label-text">Password</span>
+                    <input type="password" id="pass-in" class="glass-input">
+                </div>
+                <button onclick="window.loginPassword()" id="btn-login" class="btn-premium">Sign In</button>
+                <p style="text-align:center; margin-top:20px;">
+                    <a href="#" onclick="window.showForgot()" style="font-size:0.8rem; color:var(--primary-blue); font-weight:600;">Forgot Password?</a>
+                </p>
+            </div>
+
+            <div id="status-msg" style="margin-top:20px; text-align:center; font-size:0.85rem;"></div>
+        </div>
+    </div>
+
+    <script>
+        const sbClient = window.supabaseClient;
+        let activeEmail = "";
+
+        window.checkAccount = async function() {
+            activeEmail = document.getElementById('email-in').value.trim().toLowerCase();
+            const msg = document.getElementById('status-msg');
+            const btn = document.getElementById('btn-check');
+
+            if(!activeEmail) return;
+            btn.disabled = true;
+            btn.innerText = "Authorizing...";
+            msg.innerHTML = "";
+
+            try {
+                // 1. Verify user is in the authorized 'centers' table
+                const { data: center, error: dbError } = await sbClient
+                    .from('centers')
+                    .select('status, email')
+                    .eq('email', activeEmail)
+                    .maybeSingle();
+
+                if (dbError || !center || center.status !== 'active') {
+                    msg.innerHTML = '<span style="color:red;">Unauthorized: This email is not an active partner.</span>';
+                    btn.disabled = false;
+                    btn.innerText = "Continue";
+                    return;
+                }
+
+                // 2. Determine if user has set a password yet.
+                // We use signInWithPassword with a wrong password to check the error response.
+                const { error: authErr } = await sbClient.auth.signInWithPassword({ 
+                    email: activeEmail, 
+                    password: "detecting_presence_only_123456" 
+                });
+
+                document.getElementById('ui-email').style.display = 'none';
+
+                // LOGIC:
+                // If the error is 'Invalid login credentials', the account exists and HAS a password.
+                // If the error is 'Email not confirmed' or 'User not found', it's a first-time user.
+                if (authErr && authErr.message.toLowerCase().includes("invalid login credentials")) {
+                    document.getElementById('ui-password').style.display = 'block';
+                } else {
+                    document.getElementById('ui-verify').style.display = 'block';
+                }
+            } catch (e) {
+                msg.innerHTML = '<span style="color:red;">Network Error. Please try again later.</span>';
+                btn.disabled = false;
+                btn.innerText = "Continue";
+            }
+        };
+
+        window.loginPassword = async function() {
+            const pass = document.getElementById('pass-in').value;
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+
+            const { error } = await sbClient.auth.signInWithPassword({ email: activeEmail, password: pass });
+            
+            if (error) {
+                alert(error.message);
+                btn.disabled = false;
+            } else {
+                location.href = '../dashboard/';
+            }
+        };
+
+        window.sendOTP = async function() {
+            const { error } = await sbClient.auth.signInWithOtp({ 
+                email: activeEmail, 
+                options: { emailRedirectTo: window.location.origin + '/centers/dashboard/' } 
+            });
+            if (error) alert(error.message);
+            else document.getElementById('status-msg').innerHTML = '<span style="color:green; font-weight:600;">Check your email for the login link!</span>';
+        };
+
+        window.loginGoogle = function() {
+            sbClient.auth.signInWithOAuth({ 
+                provider: 'google', 
+                options: { redirectTo: window.location.origin + '/centers/dashboard/' } 
+            });
+        };
+
+        window.showForgot = function() {
+            document.getElementById('ui-password').style.display = 'none';
+            document.getElementById('ui-verify').style.display = 'block';
+            document.getElementById('verify-text').innerText = "Use Google or OTP to recover your access.";
+        };
+    </script>
+</body>
+</html>
