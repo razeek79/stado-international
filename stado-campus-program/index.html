@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stado Campus Program | Martial Arts, Fitness & Wellness for Schools</title>
+    <meta name="description" content="The Stado Campus Program brings structured martial arts, fitness, yoga, and wellness activities to schools and educational institutions through safe, discipline-focused training programs for students." />
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/stado-campus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <div class="logo-container">
+                <img src="../images/stado_emblem_compressed.png" alt="STADO Logo">
+                <span class="logo-text">STADO</span>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">☰</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about/">About Us</a></li>
+                <li><a href="../contact/">Contact</a></li>
+                <li><a href="/stado-campus-program/" style="color: var(--primary-red);">Campus Programs</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="campus-container">
+        
+        <section class="campus-hero">
+            <div class="reveal active">
+                <h1>STADO Campus Program</h1>
+                <p>Martial Arts, Fitness & Wellness for Educational Institutions</p>
+            </div>
+        </section>
+
+        <section class="campus-section" style="padding-top: 0;">
+            <div class="campus-card reveal active">
+                <p style="margin-bottom: 15px; font-weight: 600;">The STADO Campus Program is a professionally structured initiative designed to introduce martial arts, fitness, wellness, and student development activities within schools, colleges, and educational institutions.</p>
+                <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">The program is carefully adapted to suit academic environments, ensuring students receive the benefits of physical training without affecting their studies or daily academic schedules.</p>
+                <p style="color: var(--text-grey); font-size: 0.95rem;">STADO focuses on discipline, physical activity, confidence building, coordination, wellness, and student engagement through safe, organized, and age-appropriate training systems. Sessions are conducted under professional supervision with structured schedules, instructor allocation, and institution-coordinated planning.</p>
+            </div>
+        </section>
+
+        <section class="campus-section" style="background: var(--bg-white); border-top: 1px solid var(--border-smooth); border-bottom: 1px solid var(--border-smooth);">
+            <div class="reveal">
+                <h2 class="section-title">Program Objectives</h2>
+                <ul class="objectives-list">
+                    <li>Promote discipline and positive student behavior</li>
+                    <li>Encourage physical fitness and active lifestyles</li>
+                    <li>Improve focus, confidence, and coordination</li>
+                    <li>Create engaging extracurricular activities</li>
+                    <li>Support mental and physical wellness among students</li>
+                    <li>Introduce structured martial arts and fitness education in a safe environment</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="campus-section">
+            <div class="reveal">
+                <h2 class="section-title">Campus Programs</h2>
+                <p style="color: var(--text-grey); font-size: 0.9rem; margin-bottom: 25px;">Select a program discipline to view curriculum specialization details:</p>
+            </div>
+
+            <div class="program-pill-nav reveal">
+                <div class="pill-item active" onclick="filterProgram('karate', this)">静态 Karate</div>
+                <div class="pill-item" onclick="filterProgram('kungfu', this)">🥋 Kung Fu</div>
+                <div class="pill-item" onclick="filterProgram('kalari', this)">⚔️ Kalari</div>
+                <div class="pill-item" onclick="filterProgram('kickboxing', this)">🥊 Kickboxing</div>
+                <div class="pill-item" onclick="filterProgram('wushu', this)">🥋 Wushu</div>
+                <div class="pill-item" onclick="filterProgram('zumba', this)">💃 Zumba</div>
+                <div class="pill-item" onclick="filterProgram('yoga', this)">🧘 Yoga</div>
+            </div>
+
+            <div class="campus-card reveal" style="min-height: 380px;">
+                
+                <div id="karate" class="program-window active">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Karate</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Karate within the STADO Campus Program is delivered as a structured, discipline-oriented martial arts system designed specifically for students. Training focuses on controlled techniques, posture, coordination, and self-discipline in a safe and supervised environment.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Basic stances, punches, blocks, kicks, beginner kata, and controlled non-aggressive practices.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">School martial arts demonstrations, basic grading ceremonies, inter-school participation programs, and annual day performances.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Improves discipline, posture control, and builds physical concentration.</p>
+                    </div>
+                </div>
+
+                <div id="kungfu" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Kung Fu</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Kung Fu training introduces students to movement-based martial arts focused on balance, flexibility, coordination, and controlled body movement.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Basic movement sequences, coordination drills, flexibility, and mobility layouts.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">Group demonstrations, movement-based performances, school showcases, and annual day routines.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Enhances flexibility, active alignment, and balance control.</p>
+                    </div>
+                </div>
+
+                <div id="kalari" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Kalari (Kalaripayattu)</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Kalari introduces students to the historic, fluid martial tradition focused heavily on agility, dynamic body expressions, animal forms, and traditional posture flows.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Meippayattu (body conditioning routines), foundational leg configurations, greeting steps, and agility sequences.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">Traditional style demonstrations, cultural assemblies, school showcases, and annual performance routines.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Unlocks exceptional baseline body elasticity, structural core speed, and deep physical agility.</p>
+                    </div>
+                </div>
+
+                <div id="kickboxing" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Kickboxing Basics</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Kickboxing Basics is introduced as a fitness-focused training activity designed to improve coordination, stamina, movement control, and reflexes without physical contact.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Non-contact shadow mechanics, specialized combat footwork loops, defensive reflex simulations, and light cardio conditioning tracks.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">High-energy fitness arrays, strategic speed-drill combinations, inter-school fitness tracks, and annual day sports showcases.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Builds high cardiovascular endurance, rapid reflex responses, and overall body coordination.</p>
+                    </div>
+                </div>
+
+                <div id="wushu" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Wushu</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Wushu is introduced as a structured movement and performance-based martial art that combines flexibility, coordination, balance, and expressive motion.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Basic performance forms (Taolu sequences), stance variations, precision performance lines, and posture training.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">Demonstration shows, regional championship brackets, performance-driven inter-school meets, and theatrical annual day galas.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Develops dynamic performance confidence and artistic physical awareness.</p>
+                    </div>
+                </div>
+
+                <div id="zumba" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Zumba</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Zumba is conducted as a fun, music-based group fitness activity designed to keep students active, energetic, and engaged through easy-to-follow movement routines.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Instructor-led cardio sessions, rhythmic movement coordination, group synergy, and high-energy routine setups.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">Mass group fitness track workouts, school spirit performance showcases, and custom student wellness days.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Encourages natural community bonding and promotes stress-relieving physical expression.</p>
+                    </div>
+                </div>
+
+                <div id="yoga" class="program-window">
+                    <h3 style="color: var(--primary-red); margin-bottom: 10px;">Yoga</h3>
+                    <p style="color: var(--text-grey); font-size: 0.95rem; margin-bottom: 15px;">Yoga within the STADO Campus Program focuses on student wellness through structured postures, breathing exercises, flexibility training, and relaxation techniques.</p>
+                    
+                    <div class="program-meta-box">
+                        <span class="meta-title">Training Focus</span>
+                        <p style="font-size: 0.9rem;">Student-safe Asanas, controlled Pranayama breathing methods, core balance stabilization, and structural tracking.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Activities & Events</span>
+                        <p style="font-size: 0.9rem;">Mindfulness group spaces, posture alignment health reviews, and custom campus relaxation sessions.</p>
+                    </div>
+                    <div class="program-meta-box">
+                        <span class="meta-title">Core Benefit</span>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-blue);">Maintains high mental clarity, limits academic anxiety, and builds strong deep postures.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="campus-section" style="background: var(--bg-white); border-top: 1px solid var(--border-smooth); border-bottom: 1px solid var(--border-smooth);">
+            <div class="reveal">
+                <h2 class="section-title">Program Structure</h2>
+                <p style="color: var(--text-grey); margin-bottom: 20px;">The STADO Campus Program is organized in strict coordination with educational administrations to feature:</p>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 12px; font-weight: 600; font-size: 0.9rem;">
+                    <div class="structure-grid-item" style="padding: 12px 20px; background: var(--bg-offwhite); border-radius: 12px;"><i class="fa-regular fa-clock"></i> Weekly Scheduled Class Blocks</div>
+                    <div class="structure-grid-item" style="padding: 12px 20px; background: var(--bg-offwhite); border-radius: 12px;"><i class="fa-solid fa-children"></i> Age-Specific Student Batches</div>
+                    <div class="structure-grid-item" style="padding: 12px 20px; background: var(--bg-offwhite); border-radius: 12px;"><i class="fa-solid fa-shield-halved"></i> Safe Student-Focused Training Systems</div>
+                    <div class="structure-grid-item" style="padding: 12px 20px; background: var(--bg-offwhite); border-radius: 12px;"><i class="fa-solid fa-award"></i> Basic Grading, Performance, & Recognition Tracks</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="campus-section" style="background: var(--bg-white); border-bottom: 1px solid var(--border-smooth); padding-bottom: 50px;">
+            <div class="reveal">
+                <h2 class="section-title">Why Educational Institutions Choose STADO</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; font-size: 0.9rem; color: var(--text-grey);">
+                    <p>✓ Structured and institution-friendly program schedules</p>
+                    <p>✓ Professional and highly supervised coaching systems</p>
+                    <p>✓ Completely safe, student-centered learning environment</p>
+                    <p>✓ Age-appropriate non-aggressive training tracks</p>
+                    <p>✓ Flexible administrative tracking and integration options</p>
+                    <p>✓ Full physical support during showcase events and sports days</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="campus-section" style="text-align: center; padding: 60px 20px 80px;">
+            <div class="reveal">
+                <h2 style="margin-bottom: 15px;">Partner With STADO</h2>
+                <p style="color: var(--text-grey); max-width: 600px; margin: 0 auto 30px; font-size: 0.95rem;">STADO works directly with schools, academies, colleges, and university centers to formulate professionally managed activity systems that build robust student development.</p>
+                <a href="../contact/index.html" class="btn btn-blue" style="width: 100%; max-width: 320px;">Connect With Our Team</a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        function filterProgram(programId, pillElement) {
+            document.querySelectorAll('.pill-item').forEach(pill => pill.classList.remove('active'));
+            document.querySelectorAll('.program-window').forEach(windowNode => windowNode.classList.remove('active'));
+            
+            pillElement.classList.add('active');
+            document.getElementById(programId).classList.add('active');
+        }
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.05, rootMargin: "0px 0px -40px 0px" });
+
+        document.querySelectorAll('.reveal').forEach(element => {
+            revealObserver.observe(element);
+        });
+    </script>
+</body>
+</html>

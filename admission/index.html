@@ -9,11 +9,10 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
     <style>
         :root {
-            --primary-red: #A51C30;
+            --primary-red: #FF1744;
             --primary-red-hover: #871626;
             --bg-dark: #000000;
             --glass-white: rgba(255, 255, 255, 0.03);
@@ -277,12 +276,12 @@
                             <span class="payment-total">₹500.00</span>
                         </div>
                         <p style="font-size: 0.7rem; color: var(--text-grey); margin-top: 10px; line-height: 1.4;">
-                            Note: This is a secure payment. Your admission details will be saved to our official records only after a successful transaction.
+                            Note: Your admission details will be saved to our records. Please select your preferred UPI app on the next screen to finish payment.
                         </p>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">Proceed to Payment</button>
+                <button type="submit" class="submit-btn" id="submitBtn">Proceed to Pay Via UPI</button>
             </form>
         </div>
     </main>
@@ -325,87 +324,67 @@
                 document.getElementById('pro_group').style.display = (this.value === 'Working Professional') ? 'flex' : 'none';
             });
 
-            // Submission Logic
+            // Submission & UPI Deep Link Routing Logic
             admissionForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // CRITICAL CHECK: Ensure Razorpay is loaded
-                if (typeof window.Razorpay === 'undefined') {
-                    alert("Payment gateway is still loading. Please wait 2 seconds and try again.");
-                    return;
-                }
-
                 submitBtn.disabled = true;
                 overlay.style.display = 'flex';
-                loadingText.innerText = "Securing Session...";
+                loadingText.innerText = "Saving Application Details...";
 
                 try {
                     const admissionPayload = {
                         full_name: document.getElementById('full_name').value.trim(),
                         gender: document.getElementById('gender').value,
                         dob: dobInput.value,
-                        phone: document.getElementById('phone').value,
-                        email: document.getElementById('email').value,
-                        address: document.getElementById('address').value,
+                        phone: document.getElementById('phone').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        address: document.getElementById('address').value.trim(),
                         applicant_type: applicantType.value,
                         preferred_center: document.getElementById('preferred_center').value,
                         preferred_activity: document.getElementById('preferred_activity').value,
                         guardian_name: document.getElementById('guardian_name')?.value || null,
                         standard: document.getElementById('standard')?.value || null,
                         occupation: document.getElementById('occupation')?.value || null,
-                        application_year: new Date().getFullYear()
+                        application_year: new Date().getFullYear(),
+                        
+                        // MATCHING YOUR ACTUAL SCHEMA COLUMNS:
+                        status: 'Pending UPI Verification', // Maps straight to your text 'status' column
+                        razorpay_order_id: 'UPI_INTENT_FLOW' // Re-purposing this column to easily track payment method type
                     };
 
-                    // STEP 1: Create Order via Edge Function
-                    const { data: order, error: orderErr } = await window.supabaseClient.functions.invoke('razorpay-portal', {
-                        body: { action: 'create_order', amount: 500 }
-                    });
+                    // STEP 1: Save data to your Supabase table before redirecting away
+                    // Note: Ensure window.supabaseClient is properly configured inside your '../config.js'
+                    const { error: dbErr } = await window.supabaseClient
+                        .from('admissions') // Make sure this matches your exact Supabase table name
+                        .insert([admissionPayload]);
 
-                    if (orderErr || !order.id) throw new Error("Failed to initialize secure payment.");
+                    if (dbErr) throw new Error("Database transaction failed: " + dbErr.message);
 
-                    const options = {
-                        "key": "rzp_test_SnAm5F5GVfZZIZ", 
-                        "amount": order.amount,
-                        "currency": "INR",
-                        "name": "STADO International",
-                        "order_id": order.id,
-                        "prefill": {
-                            "name": admissionPayload.full_name,
-                            "email": admissionPayload.email,
-                            "contact": admissionPayload.phone
-                        },
-                        "theme": { "color": "#A51C30" },
-                        "handler": async function (response) {
-                            overlay.style.display = 'flex';
-                            loadingText.innerText = "Verifying Transaction...";
+                    loadingText.innerText = "Launching UPI Core Gateway...";
 
-                            const { data: verifyData, error: verifyErr } = await window.supabaseClient.functions.invoke('razorpay-portal', {
-                                body: {
-                                    action: 'verify_and_save',
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    admission_payload: admissionPayload
-                                }
-                            });
+                    // STEP 2: Configure UPI Protocol Parameters
+                    // IMPORTANT: Replace 'your_vpa@bank' with your exact merchant or bank UPI VPA handle string
+                    const upiId = "stadointernational@okaxis"; 
+                    const payeeName = encodeURIComponent("STADO International");
+                    const amount = "500.00";
+                    const transactionNote = encodeURIComponent(`Adm-${admissionPayload.phone}`);
+                    
+                    // Construct standard structural upi URI scheme
+                    const upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
 
-                            if (verifyErr || !verifyData.success) throw new Error("Verification Failed.");
-
-                            overlay.style.display = 'none';
-                            alert("Admission Successful!");
-                            window.location.href = "../index.html";
-                        },
-                        "modal": {
-                            "ondismiss": function() {
-                                overlay.style.display = 'none';
-                                submitBtn.disabled = false;
-                            }
-                        }
-                    };
-
-                    const rzp = new window.Razorpay(options);
+                    // Turn off loading structures safely
                     overlay.style.display = 'none';
-                    rzp.open();
+                    submitBtn.disabled = false;
+
+                    // STEP 3: Switch runtime straight to mobile UPI App selector context
+                    window.location.href = upiUrl;
+
+                    // Graceful UX delay block allowing the native handset sheet context to trigger first
+                    setTimeout(() => {
+                        alert("Complete the payment on your chosen UPI app. Tap OK to finish application routing.");
+                        window.location.href = "../index.html";
+                    }, 1500);
 
                 } catch (err) {
                     overlay.style.display = 'none';
