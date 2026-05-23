@@ -22,6 +22,7 @@
             --font-heading: 'Oswald', sans-serif;
             --font-body: 'Montserrat', sans-serif;
             --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --success-green: #00E676;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -83,6 +84,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+            transition: var(--transition);
         }
 
         .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
@@ -143,7 +145,27 @@
         .payment-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .payment-total { font-size: 1.4rem; font-weight: 700; color: #fff; font-family: var(--font-heading); }
 
-        /* Button */
+        /* Verification Panel Area */
+        .verification-panel {
+            display: none;
+            background: rgba(0, 230, 118, 0.03);
+            border: 1px dashed rgba(0, 230, 118, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            margin-top: 20px;
+            animation: slideDown 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        .verification-panel h3 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: var(--success-green);
+        }
+
+        /* Button styling */
         .submit-btn {
             background: var(--primary-red);
             color: white;
@@ -162,7 +184,17 @@
         }
 
         .submit-btn:hover:not(:disabled) { background: var(--primary-red-hover); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(165, 28, 48, 0.3); }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .submit-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .submit-btn.bright {
+            background: var(--success-green);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.4);
+        }
+        .submit-btn.bright:hover {
+            background: #00c864;
+            transform: translateY(-3px);
+        }
 
         /* System Overlays */
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
@@ -196,7 +228,8 @@
 
         <div class="admission-card">
             <form id="admissionForm">
-                <div class="form-grid">
+                <!-- Main Fields Wrapper -->
+                <div class="form-grid" id="mainFormFields">
                     <div class="form-group">
                         <label>Selected Centre</label>
                         <input type="text" id="preferred_center" class="form-control" readonly required>
@@ -276,8 +309,21 @@
                             <span class="payment-total">₹500.00</span>
                         </div>
                         <p style="font-size: 0.7rem; color: var(--text-grey); margin-top: 10px; line-height: 1.4;">
-                            Note: Your admission details will be saved to our records. Please select your preferred UPI app on the next screen to finish payment.
+                            Note: Your admission details are secured. Press the button below to initiate your direct smartphone UPI application context layout.
                         </p>
+                    </div>
+                </div>
+
+                <!-- NEW: Dynamic Transaction ID Prompt Area -->
+                <div class="verification-panel" id="verificationPanel">
+                    <h3>Confirm UPI Transaction</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-grey); margin-bottom: 20px; line-height: 1.5;">
+                        Please check your banking/UPI app history log for the successful payment receipt and paste the exact <strong style="color:#fff;">12-digit transaction Ref No. / UTR / Transaction ID</strong> below to complete your registration.
+                    </p>
+                    <div class="form-group">
+                        <label>Enter 12-Digit Transaction ID / UTR *</label>
+                        <input type="text" id="user_txn_id" class="form-control" maxlength="12" placeholder="e.g., 349120485921" autocomplete="off">
+                        <span id="validationHint" style="font-size: 0.7rem; color: var(--primary-red); margin-top: 5px; font-weight: 600;"></span>
                     </div>
                 </div>
 
@@ -295,10 +341,18 @@
         document.addEventListener("DOMContentLoaded", () => {
             const admissionForm = document.getElementById('admissionForm');
             const submitBtn = document.getElementById('submitBtn');
+            const mainFormFields = document.getElementById('mainFormFields');
+            const verificationPanel = document.getElementById('verificationPanel');
+            const userTxnInput = document.getElementById('user_txn_id');
+            const validationHint = document.getElementById('validationHint');
             const overlay = document.getElementById('loading-overlay');
             const loadingText = document.getElementById('loadingText');
             const dobInput = document.getElementById('dob');
             const applicantType = document.getElementById('applicant_type');
+
+            // Internal flow control flags
+            let currentFlowStep = "PAYMENT_INITIATION"; 
+            let systemRefOrderMarker = "";
 
             // URL Parameter Auto-fill
             const params = new URLSearchParams(window.location.search);
@@ -311,7 +365,7 @@
                 document.getElementById('subHeading').innerText = `${decodeURIComponent(programVal)} Admission @ STADO ${decodeURIComponent(centerVal)}`;
             }
 
-            // UI Logic
+            // UI Logic for Conditionals
             dobInput.addEventListener('change', function() {
                 const age = new Date().getFullYear() - new Date(this.value).getFullYear();
                 const group = document.getElementById('guardian_group');
@@ -324,72 +378,120 @@
                 document.getElementById('pro_group').style.display = (this.value === 'Working Professional') ? 'flex' : 'none';
             });
 
-            // Submission & UPI Deep Link Routing Logic
+            // Input parsing to allow strictly numbers and exact 12 digit threshold checks
+            userTxnInput.addEventListener('input', function() {
+                // Filter character inputs keeping digits only
+                this.value = this.value.replace(/\D/g, '');
+                
+                if (this.value.length === 12) {
+                    validationHint.innerText = "✓ Valid format. Ready to finalize.";
+                    validationHint.style.color = "var(--success-green)";
+                    submitBtn.disabled = false;
+                    submitBtn.classList.add('bright');
+                } else {
+                    validationHint.innerText = `Requires 12 digits (Entered: ${this.value.length})`;
+                    validationHint.style.color = "var(--primary-red)";
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('bright');
+                }
+            });
+
+            // Master execution wrapper handling step routing states
             admissionForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                submitBtn.disabled = true;
-                overlay.style.display = 'flex';
-                loadingText.innerText = "Saving Application Details...";
+                if (currentFlowStep === "PAYMENT_INITIATION") {
+                    // STEP 1: Launch Payment Routing
+                    alert("ATTENTION:\n\n1. Select your preferred UPI application on the next system prompt.\n2. Please note your transaction reference number inside your banking statement/history once complete.\n3. Return to this browser tab to input your transaction reference ID.");
+                    
+                    submitBtn.disabled = true;
+                    overlay.style.display = 'flex';
+                    loadingText.innerText = "Configuring secure UPI connection...";
 
-                try {
-                    const admissionPayload = {
-                        full_name: document.getElementById('full_name').value.trim(),
-                        gender: document.getElementById('gender').value,
-                        dob: dobInput.value,
-                        phone: document.getElementById('phone').value.trim(),
-                        email: document.getElementById('email').value.trim(),
-                        address: document.getElementById('address').value.trim(),
-                        applicant_type: applicantType.value,
-                        preferred_center: document.getElementById('preferred_center').value,
-                        preferred_activity: document.getElementById('preferred_activity').value,
-                        guardian_name: document.getElementById('guardian_name')?.value || null,
-                        standard: document.getElementById('standard')?.value || null,
-                        occupation: document.getElementById('occupation')?.value || null,
-                        application_year: new Date().getFullYear(),
-                        
-                        // MATCHING YOUR ACTUAL SCHEMA COLUMNS:
-                        status: 'Pending UPI Verification', // Maps straight to your text 'status' column
-                        razorpay_order_id: 'UPI_INTENT_FLOW' // Re-purposing this column to easily track payment method type
-                    };
+                    // Generate a random reference token for logging before sending user away
+                    systemRefOrderMarker = "STADO-" + Math.floor(100000 + Math.random() * 900000);
 
-                    // STEP 1: Save data to your Supabase table before redirecting away
-                    // Note: Ensure window.supabaseClient is properly configured inside your '../config.js'
-                    const { error: dbErr } = await window.supabaseClient
-                        .from('admissions') // Make sure this matches your exact Supabase table name
-                        .insert([admissionPayload]);
-
-                    if (dbErr) throw new Error("Database transaction failed: " + dbErr.message);
-
-                    loadingText.innerText = "Launching UPI Core Gateway...";
-
-                    // STEP 2: Configure UPI Protocol Parameters
-                    // IMPORTANT: Replace 'your_vpa@bank' with your exact merchant or bank UPI VPA handle string
-                    const upiId = "stadointernational@okaxis"; 
+                    // Configure explicit deep link configurations
+                    const upiId = "stadointernational@okaxis"; // !!! REPLACE WITH YOUR REAL BUSINESS UPI HANDLE 
                     const payeeName = encodeURIComponent("STADO International");
                     const amount = "500.00";
-                    const transactionNote = encodeURIComponent(`Adm-${admissionPayload.phone}`);
+                    const transactionNote = encodeURIComponent(`Ref:${systemRefOrderMarker}`);
                     
-                    // Construct standard structural upi URI scheme
                     const upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
 
-                    // Turn off loading structures safely
-                    overlay.style.display = 'none';
-                    submitBtn.disabled = false;
-
-                    // STEP 3: Switch runtime straight to mobile UPI App selector context
+                    // Redirect the window context straight out to internal device handler schemes
                     window.location.href = upiUrl;
 
-                    // Graceful UX delay block allowing the native handset sheet context to trigger first
+                    // Small delay context before toggling input screen structures for when they route backwards
                     setTimeout(() => {
-                        alert("Complete the payment on your chosen UPI app. Tap OK to finish application routing.");
-                        window.location.href = "../index.html";
-                    }, 1500);
+                        overlay.style.display = 'none';
+                        mainFormFields.style.opacity = "0.2";
+                        // Prevent tweaking basic values during intermediate registration states
+                        Array.from(mainFormFields.getElementsByTagName('input')).forEach(el => el.disabled = true);
+                        Array.from(mainFormFields.getElementsByTagName('select')).forEach(el => el.disabled = true);
+                        Array.from(mainFormFields.getElementsByTagName('textarea')).forEach(el => el.disabled = true);
+                        
+                        // Surface validation UI areas
+                        verificationPanel.style.display = 'block';
+                        submitBtn.innerText = "Complete Registration";
+                        submitBtn.disabled = true; // Lock down button until a clean 12 digit transaction string goes into place
+                        currentFlowStep = "DATABASE_COMMIT";
+                        
+                        // Scroll nicely down towards verification layouts
+                        verificationPanel.scrollIntoView({ behavior: 'smooth' });
+                    }, 1000);
 
-                } catch (err) {
-                    overlay.style.display = 'none';
-                    submitBtn.disabled = false;
-                    alert("Error: " + err.message);
+                } else if (currentFlowStep === "DATABASE_COMMIT") {
+                    // STEP 2: Handle database save after verifying string bounds
+                    if (userTxnInput.value.length !== 12) {
+                        alert("Please provide a valid 12-digit transaction ID reference.");
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('bright');
+                    overlay.style.display = 'flex';
+                    loadingText.innerText = "Publishing registration credentials...";
+
+                    try {
+                        const admissionPayload = {
+                            full_name: document.getElementById('full_name').value.trim(),
+                            gender: document.getElementById('gender').value,
+                            dob: dobInput.value,
+                            phone: document.getElementById('phone').value.trim(),
+                            email: document.getElementById('email').value.trim(),
+                            address: document.getElementById('address').value.trim(),
+                            applicant_type: applicantType.value,
+                            preferred_center: document.getElementById('preferred_center').value,
+                            preferred_activity: document.getElementById('preferred_activity').value,
+                            guardian_name: document.getElementById('guardian_name')?.value || null,
+                            standard: document.getElementById('standard')?.value || null,
+                            occupation: document.getElementById('occupation')?.value || null,
+                            application_year: new Date().getFullYear(),
+                            
+                            // Database explicit schemas mapping
+                            status: 'Pending Verification',
+                            razorpay_order_id: 'UPI_INTENT_FLOW',
+                            payment_id: userTxnInput.value.trim() // Logging user's provided 12-digit UTR straight into payment_id field
+                        };
+
+                        // Send straight to Supabase
+                        const { error: dbErr } = await window.supabaseClient
+                            .from('admissions')
+                            .insert([admissionPayload]);
+
+                        if (dbErr) throw new Error(dbErr.message);
+
+                        overlay.style.display = 'none';
+                        alert("Application Submitted Successfully! Admission record stored under status: Pending Verification.");
+                        window.location.href = "../index.html";
+
+                    } catch (err) {
+                        overlay.style.display = 'none';
+                        submitBtn.disabled = false;
+                        submitBtn.classList.add('bright');
+                        alert("Registration Error: " + err.message);
+                    }
                 }
             });
         });
