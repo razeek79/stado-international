@@ -1,10 +1,12 @@
-/* stado-campus.css - Premium Extended Design System */
+/* stado-campus.css - Elite Educational Design System */
 :root {
     --primary-blue: #0071E3;
-    --primary-blue-glow: rgba(0, 113, 227, 0.12);
-    --bg-premium-light: #FBFBFD; /* Seamless Apple-style offwhite */
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-    --border-smooth: rgba(0, 0, 0, 0.06);
+    --primary-blue-glow: rgba(0, 113, 227, 0.08);
+    --primary-red-alpha: rgba(255, 23, 68, 0.05);
+    --bg-premium-light: #F5F5F7; /* Apple Grey foundation */
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.03);
+    --hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+    --border-smooth: rgba(0, 0, 0, 0.05);
 }
 
 body {
@@ -12,51 +14,58 @@ body {
 }
 
 .campus-container {
-    padding-top: 100px;
+    padding-top: 110px;
 }
 
-/* Hero Deep Custom Gradient Line */
+/* Creative Hero Section Layout */
 .campus-hero {
-    padding: 60px 20px 40px;
+    padding: 80px 20px 50px;
     text-align: center;
-    background: radial-gradient(circle at top, var(--primary-blue-glow) 0%, transparent 70%);
+    background: radial-gradient(circle at 50% 0%, rgba(0, 113, 227, 0.06) 0%, transparent 60%);
 }
 
 .campus-hero h1 {
-    font-size: 2.5rem;
-    line-height: 1.1;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, var(--text-dark) 30%, var(--primary-red) 100%);
+    font-size: 2.8rem;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    font-weight: 700;
+    background: linear-gradient(145deg, #1d1d1f 40%, var(--primary-red) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .campus-hero p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-grey);
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
     font-weight: 400;
 }
 
+/* Clean Form/Layout Sections */
 .campus-section {
-    padding: 50px 20px;
-    max-width: 800px;
+    padding: 60px 20px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .campus-card {
     background: var(--bg-white);
     border: 1px solid var(--border-smooth);
-    border-radius: 24px;
-    padding: 30px 24px;
+    border-radius: 28px;
+    padding: 35px 30px;
     box-shadow: var(--card-shadow);
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    transition: var(--transition);
+}
+.campus-card:hover {
+    box-shadow: var(--hover-shadow);
 }
 
 .section-title {
-    font-size: 1.6rem;
-    margin-bottom: 25px;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
     position: relative;
     display: inline-block;
 }
@@ -66,39 +75,46 @@ body {
     position: absolute;
     bottom: -6px;
     left: 0;
-    width: 35px;
-    height: 3px;
+    width: 45px;
+    height: 3.5px;
     background: var(--primary-red);
-    border-radius: 2px;
+    border-radius: 50px;
 }
 
+/* Premium Objectives List Layout */
 .objectives-list {
     list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
 }
 
 .objectives-list li {
     position: relative;
-    padding-left: 28px;
-    margin-bottom: 15px;
+    padding: 16px 20px 16px 45px;
     font-weight: 600;
     font-size: 0.95rem;
+    background: var(--bg-offwhite);
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.02);
 }
 
 .objectives-list li::before {
     content: "✓";
     position: absolute;
-    left: 0;
+    left: 18px;
     color: var(--primary-blue);
     font-weight: 700;
+    font-size: 1.1rem;
 }
 
-/* Horizontal Responsive Scroll Elements */
+/* Premium Navigation Slide Container */
 .program-pill-nav {
     display: flex;
     gap: 10px;
     overflow-x: auto;
-    padding: 5px 20px 15px;
-    margin-bottom: 20px;
+    padding: 10px 20px 20px;
+    margin-bottom: 25px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
@@ -109,14 +125,15 @@ body {
 
 .pill-item {
     white-space: nowrap;
-    padding: 12px 24px;
+    padding: 14px 28px;
     background: var(--bg-white);
     border: 1px solid var(--border-smooth);
     border-radius: 50px;
     font-family: var(--font-heading);
     font-size: 0.85rem;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     transition: var(--transition);
 }
 
@@ -124,11 +141,13 @@ body {
     background: var(--text-dark);
     color: var(--bg-white);
     border-color: var(--text-dark);
+    transform: scale(0.96);
 }
 
+/* Dynamic Active Windows Display */
 .program-window {
     display: none;
-    animation: windowActive 0.4s ease-out forwards;
+    animation: windowActive 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 .program-window.active {
@@ -136,14 +155,14 @@ body {
 }
 
 @keyframes windowActive {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .program-meta-box {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px dashed var(--border-smooth);
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-smooth);
 }
 
 .meta-title {
@@ -151,29 +170,101 @@ body {
     font-weight: 700;
     color: var(--text-grey);
     text-transform: uppercase;
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 5px;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
-.btn-blue {
-    background: var(--primary-blue);
-    color: white;
-    border: 1px solid var(--primary-blue);
-    text-align: center;
+.meta-title i {
+    color: var(--primary-red);
 }
-.btn-blue:hover {
-    background: #0056B3;
+
+/* Structured Program Meta Box Panels */
+.structure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.structure-grid-item {
+    padding: 20px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-smooth);
+    border-radius: 18px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--card-shadow);
 }
 
 .structure-grid-item i {
+    font-size: 1.2rem;
     color: var(--primary-blue);
-    margin-right: 10px;
-    width: 20px;
+    background: var(--primary-blue-glow);
+    padding: 12px;
+    border-radius: 12px;
+}
+
+/* Multi-Action Conversion Hub Area */
+.cta-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 35px;
+}
+
+.btn-premium-cta {
+    display: inline-block;
+    width: 100%;
+    max-width: 320px;
+    padding: 18px 36px;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 50px;
+    font-weight: 700;
     text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-blue-fill {
+    background: var(--primary-blue);
+    color: white;
+    border: 1px solid var(--primary-blue);
+    box-shadow: 0 10px 25px rgba(0, 113, 227, 0.25);
+}
+.btn-blue-fill:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-red-outline {
+    background: transparent;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+}
+.btn-red-outline:hover {
+    background: var(--primary-red-alpha);
+    transform: translateY(-2px);
 }
 
 @media (min-width: 769px) {
-    .campus-hero h1 { font-size: 3.6rem; }
-    .program-pill-nav { justify-content: center; overflow: hidden; }
+    .campus-hero h1 { 
+        font-size: 3.8rem; 
+    }
+    
+    .program-pill-nav { 
+        justify-content: center; 
+        overflow: visible;     /* Overrides the mobile hidden/scroll states */
+        flex-wrap: wrap;       /* Lets pills drop to a clean second line if the lap screen is small */
+        padding: 10px 0 25px;  /* Cleans up spacing */
+    }
 }
