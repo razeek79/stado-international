@@ -23,6 +23,7 @@
             --font-body: 'Montserrat', sans-serif;
             --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             --success-green: #00E676;
+            --alert-blue: #2979FF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -145,11 +146,11 @@
         .payment-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .payment-total { font-size: 1.4rem; font-weight: 700; color: #fff; font-family: var(--font-heading); }
 
-        /* Verification Panel Area */
+        /* Instruction & Verification Panel Area */
         .verification-panel {
             display: none;
-            background: rgba(0, 230, 118, 0.03);
-            border: 1px dashed rgba(0, 230, 118, 0.3);
+            background: rgba(41, 121, 255, 0.03);
+            border: 1px dashed var(--alert-blue);
             border-radius: 24px;
             padding: 30px;
             margin-top: 20px;
@@ -161,8 +162,39 @@
             font-size: 1.4rem;
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-bottom: 10px;
-            color: var(--success-green);
+            margin-bottom: 15px;
+            color: var(--alert-blue);
+        }
+
+        .payment-instructions-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .payment-number-display {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: #fff;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-badge {
+            font-family: var(--font-body);
+            font-size: 0.65rem;
+            background: var(--alert-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
         }
 
         /* Button styling */
@@ -228,7 +260,6 @@
 
         <div class="admission-card">
             <form id="admissionForm">
-                <!-- Main Fields Wrapper -->
                 <div class="form-grid" id="mainFormFields">
                     <div class="form-group">
                         <label>Selected Centre</label>
@@ -309,18 +340,29 @@
                             <span class="payment-total">₹500.00</span>
                         </div>
                         <p style="font-size: 0.7rem; color: var(--text-grey); margin-top: 10px; line-height: 1.4;">
-                            Note: Your admission details are secured. Press the button below to initiate your direct smartphone UPI application context layout.
+                            Note: Your admission details are secured. Press the button below to get payment transfer instructions.
                         </p>
                     </div>
                 </div>
 
-                <!-- NEW: Dynamic Transaction ID Prompt Area -->
                 <div class="verification-panel" id="verificationPanel">
-                    <h3>Confirm UPI Transaction</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-grey); margin-bottom: 20px; line-height: 1.5;">
-                        Please verify your payment status in your banking or UPI application and enter the exact <strong style="color:#fff;">12-digit Transaction Reference Number (UTR / Ref No. / Transaction ID)</strong> below to complete your registration.<span style="color:#facc15; font-weight:600;">Important:</span> Please ensure the number entered matches the successful payment receipt exactly. Submitting incorrect, edited, reused, or fake transaction details may result in verification failure, temporary suspension of registration, or permanent disqualification from the program.
-                    </p>
+                    <h3>UPI Transfer Details</h3>
+                    
+                    <div class="payment-instructions-box">
+                        <p style="font-size: 0.8rem; color: var(--text-grey); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Step 1: Send ₹500 to this number</p>
+                        <div class="payment-number-display">
+                            <span id="merchantNumberDisplay">9876543210</span>
+                            <span class="copy-badge" id="copyBtn">Copy</span>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-grey); margin-top: 5px;">
+                            Accepts payments inside any application (**Google Pay, PhonePe, Paytm, or BHIM**).
+                        </p>
+                    </div>
+
                     <div class="form-group">
+                        <p style="font-size: 0.85rem; color: var(--text-grey); margin-bottom: 15px; line-height: 1.5;">
+                            <strong style="color: #fff;">Step 2:</strong> Check your payment app history, look for the successful payment receipt, and paste the exact <strong>12-digit Ref No. / UTR / Transaction ID</strong> below to confirm.
+                        </p>
                         <label>Enter 12-Digit Transaction ID / UTR *</label>
                         <input type="text" id="user_txn_id" class="form-control" maxlength="12" placeholder="e.g., 349120485921" autocomplete="off">
                         <span id="validationHint" style="font-size: 0.7rem; color: var(--primary-red); margin-top: 5px; font-weight: 600;"></span>
@@ -349,10 +391,15 @@
             const loadingText = document.getElementById('loadingText');
             const dobInput = document.getElementById('dob');
             const applicantType = document.getElementById('applicant_type');
+            const copyBtn = document.getElementById('copyBtn');
+            const merchantNumberDisplay = document.getElementById('merchantNumberDisplay');
 
-            // Internal flow control flags
+            // Internal flow control state configuration
             let currentFlowStep = "PAYMENT_INITIATION"; 
-            let systemRefOrderMarker = "";
+
+            // !!! REPLACE THIS WITH YOUR REAL ACCOUNT TRANSFER PHONE NUMBER
+            const STADO_PAYMENT_NUMBER = "9074505131"; 
+            merchantNumberDisplay.innerText = STADO_PAYMENT_NUMBER;
 
             // URL Parameter Auto-fill
             const params = new URLSearchParams(window.location.search);
@@ -378,9 +425,22 @@
                 document.getElementById('pro_group').style.display = (this.value === 'Working Professional') ? 'flex' : 'none';
             });
 
-            // Input parsing to allow strictly numbers and exact 12 digit threshold checks
+            // Clipboard integration helper
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(STADO_PAYMENT_NUMBER).then(() => {
+                    copyBtn.innerText = "Copied!";
+                    copyBtn.style.background = "var(--success-green)";
+                    copyBtn.style.color = "#000";
+                    setTimeout(() => {
+                        copyBtn.innerText = "Copy";
+                        copyBtn.style.background = "var(--alert-blue)";
+                        copyBtn.style.color = "white";
+                    }, 2000);
+                });
+            });
+
+            // Input parsing to enforce strictly numbers and exact 12-digit bounds
             userTxnInput.addEventListener('input', function() {
-                // Filter character inputs keeping digits only
                 this.value = this.value.replace(/\D/g, '');
                 
                 if (this.value.length === 12) {
@@ -396,55 +456,31 @@
                 }
             });
 
-            // Master execution wrapper handling step routing states
+            // Master execution wrapper handling state switching routing behaviors
             admissionForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 if (currentFlowStep === "PAYMENT_INITIATION") {
-                    // STEP 1: Launch Payment Routing
-                    alert("ATTENTION:\n\n1. Select your preferred UPI application on the next system prompt.\n2. Please note your transaction reference number inside your banking statement/history once complete.\n3. Return to this browser tab to input your transaction reference ID.");
+                    alert(`INSTRUCTIONS:\n\n1. Copy the displayed phone number: ${STADO_PAYMENT_NUMBER}\n2. Open Google Pay, PhonePe, Paytm or any UPI App.\n3. Pay exactly ₹500 to this number.\n4. Copy the 12-digit UTR/Transaction ID from your app payment history and return here.`);
                     
-                    submitBtn.disabled = true;
-                    overlay.style.display = 'flex';
-                    loadingText.innerText = "Configuring secure UPI connection...";
-
-                    // Generate a random reference token for logging before sending user away
-                    systemRefOrderMarker = "STADO-" + Math.floor(100000 + Math.random() * 900000);
-
-                    // Configure explicit deep link configurations
-                    const upiId = "shajithabeegum9@oksbi"; // !!! REPLACE WITH YOUR REAL BUSINESS UPI HANDLE 
-                    const payeeName = encodeURIComponent("STADO International");
-                    const amount = "500.00";
-                    const transactionNote = encodeURIComponent(`Ref:${systemRefOrderMarker}`);
+                    // Freeze values to avoid field tampering midway
+                    Array.from(mainFormFields.getElementsByTagName('input')).forEach(el => el.disabled = true);
+                    Array.from(mainFormFields.getElementsByTagName('select')).forEach(el => el.disabled = true);
+                    Array.from(mainFormFields.getElementsByTagName('textarea')).forEach(el => el.disabled = true);
                     
-                    const upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
-
-                    // Redirect the window context straight out to internal device handler schemes
-                    window.location.href = upiUrl;
-
-                    // Small delay context before toggling input screen structures for when they route backwards
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        mainFormFields.style.opacity = "0.2";
-                        // Prevent tweaking basic values during intermediate registration states
-                        Array.from(mainFormFields.getElementsByTagName('input')).forEach(el => el.disabled = true);
-                        Array.from(mainFormFields.getElementsByTagName('select')).forEach(el => el.disabled = true);
-                        Array.from(mainFormFields.getElementsByTagName('textarea')).forEach(el => el.disabled = true);
-                        
-                        // Surface validation UI areas
-                        verificationPanel.style.display = 'block';
-                        submitBtn.innerText = "Complete Registration";
-                        submitBtn.disabled = true; // Lock down button until a clean 12 digit transaction string goes into place
-                        currentFlowStep = "DATABASE_COMMIT";
-                        
-                        // Scroll nicely down towards verification layouts
-                        verificationPanel.scrollIntoView({ behavior: 'smooth' });
-                    }, 1000);
+                    mainFormFields.style.opacity = "0.2";
+                    
+                    // Surface instructions & validation elements
+                    verificationPanel.style.display = 'block';
+                    verificationPanel.scrollIntoView({ behavior: 'smooth' });
+                    
+                    submitBtn.innerText = "Complete Registration";
+                    submitBtn.disabled = true; // Kept locked until exactly 12 digits are typed
+                    currentFlowStep = "DATABASE_COMMIT";
 
                 } else if (currentFlowStep === "DATABASE_COMMIT") {
-                    // STEP 2: Handle database save after verifying string bounds
                     if (userTxnInput.value.length !== 12) {
-                        alert("Please provide a valid 12-digit transaction ID reference.");
+                        alert("Please provide a valid 12-digit transaction UTR Reference ID.");
                         return;
                     }
 
@@ -469,13 +505,13 @@
                             occupation: document.getElementById('occupation')?.value || null,
                             application_year: new Date().getFullYear(),
                             
-                            // Database explicit schemas mapping
+                            // Map cleanly into your existing structural database layout columns
                             status: 'Pending Verification',
-                            razorpay_order_id: 'UPI_INTENT_FLOW',
-                            payment_id: userTxnInput.value.trim() // Logging user's provided 12-digit UTR straight into payment_id field
+                            razorpay_order_id: 'DIRECT_PHONE_TRANSFER',
+                            payment_id: userTxnInput.value.trim() 
                         };
 
-                        // Send straight to Supabase
+                        // Send payload straight to Supabase
                         const { error: dbErr } = await window.supabaseClient
                             .from('admissions')
                             .insert([admissionPayload]);
@@ -483,7 +519,7 @@
                         if (dbErr) throw new Error(dbErr.message);
 
                         overlay.style.display = 'none';
-                        alert("Application Submitted Successfully! Admission record stored under status: Pending Verification.");
+                        alert("Application Submitted Successfully! Stored status flag under: Pending Verification.");
                         window.location.href = "../index.html";
 
                     } catch (err) {

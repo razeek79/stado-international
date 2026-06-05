@@ -19,9 +19,11 @@
             --studio-bg: #F5F5F7;
             --pure-white: #FFFFFF;
             --border-soft: rgba(0,0,0,0.1);
+            --error-red: #FF3B30;
+            --error-bg: #FFECEB;
         }
 
-        body { background: var(--studio-bg); color: #1d1d1f; margin: 0; }
+        body { background: var(--studio-bg); color: #1d1d1f; margin: 0; font-family: 'Montserrat', sans-serif; }
         .apply-wrapper { max-width: 700px; margin: 60px auto; padding: 0 20px; }
         
         .form-step { display: none; }
@@ -37,6 +39,8 @@
             background: var(--pure-white); font-size: 1rem; margin-top: 8px; outline: none;
             transition: 0.2s; box-sizing: border-box;
         }
+        .glass-input:focus { border-color: var(--primary-blue); }
+        .glass-input.input-error { border-color: var(--error-red); background: #FFF9F9; }
 
         .label-text { font-size: 0.85rem; font-weight: 700; color: #6e6e73; text-transform: uppercase; margin-left: 5px; }
 
@@ -53,8 +57,107 @@
         .step-dot { width: 40px; height: 4px; background: var(--disabled-gray); border-radius: 10px; }
         .step-dot.active { background: var(--primary-blue); }
 
-        .btn-step-nav { background: var(--disabled-gray); color: #86868b; cursor: not-allowed; border: none; }
+        .btn-step-nav { background: var(--disabled-gray); color: #86868b; cursor: not-allowed; border: none; padding: 16px; border-radius: 14px; font-weight: 600; font-size: 1rem; }
         .btn-step-nav.ready { background: var(--primary-blue); color: #fff; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3); }
+        .btn-wa { background: #e8e8ed; color: #424245; border: none; padding: 16px; border-radius: 14px; font-weight: 600; cursor: pointer; }
+
+        /* Error Banner Styling */
+        .error-banner {
+            background: var(--error-bg);
+            color: var(--error-red);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: stepFade 0.3s ease-out;
+        }
+
+        /* --- PROFESSIONAL MOU COMPONENTS --- */
+        .mou-trigger-box {
+            background: var(--pure-white);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .mou-link {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .mou-link:hover { opacity: 0.8; text-decoration: underline; }
+        
+        .mou-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .mou-modal.active { display: flex; }
+        .mou-modal-content {
+            background: #fff;
+            width: 95%;
+            max-width: 680px;
+            max-height: 85vh;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            animation: modalUp 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes modalUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .mou-scroll-area {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 15px;
+            margin: 20px 0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #1d1d1f;
+        }
+        .mou-scroll-area h1 { font-family: 'Oswald', sans-serif; font-size: 1.8rem; text-align: center; margin-top: 0; margin-bottom: 5px; color: #1d1d1f; }
+        .mou-scroll-area h2 { font-family: 'Oswald', sans-serif; font-size: 1.2rem; text-align: center; margin-top: 0; margin-bottom: 20px; color: #515154; }
+        .mou-scroll-area h3 { font-size: 1.05rem; font-weight: 700; margin-top: 25px; margin-bottom: 10px; color: #1d1d1f; border-bottom: 1px solid var(--border-soft); padding-bottom: 4px; }
+        .mou-scroll-area p { margin: 0 0 12px 0; text-align: justify; }
+        .mou-scroll-area ul { margin: 0 0 15px 0; padding-left: 20px; }
+        .mou-scroll-area li { margin-bottom: 6px; }
+        .mou-highlight-text { background-color: #f2f2f7; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        .dynamic-fill { color: var(--primary-blue); font-weight: 700; border-bottom: 1px dashed var(--primary-blue); padding: 0 4px; }
+        
+        .mou-footer-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .mou-footer-btn:disabled { background: var(--disabled-gray); color: #86868b; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -72,28 +175,30 @@
         </div>
 
         <form id="centerForm">
-            <!-- STEP 1: Contact -->
             <div class="form-step active" id="step1">
                 <div class="form-group" style="margin-bottom: 20px;">
                     <span class="label-text">Owner's Name *</span>
-                    <input type="text" name="owner_name" class="glass-input required-input" required>
+                    <input type="text" name="owner_name" id="form_owner_name" class="glass-input required-input" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <span class="label-text">Centre Name *</span>
-                    <input type="text" name="center_name" class="glass-input required-input" required>
+                    <input type="text" name="center_name" id="form_center_name" class="glass-input required-input" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <span class="label-text">Email *</span>
                     <input type="email" name="email" class="glass-input required-input" required>
                 </div>
-                <div class="form-group" style="margin-bottom: 30px;">
-                    <span class="label-text">Phone *</span>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <span class="label-text">Primary Phone *</span>
                     <input type="tel" name="phone" class="glass-input required-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <span class="label-text">Alternative Phone (Optional)</span>
+                    <input type="tel" name="alternative_phone" class="glass-input" placeholder="Secondary contact number if any">
                 </div>
                 <button type="button" id="next1" class="btn-round btn-step-nav" style="width: 100%;" disabled onclick="nextStep(2)">Next Step</button>
             </div>
 
-            <!-- STEP 2: Programs & Location -->
             <div class="form-step" id="step2">
                 <div class="form-group" style="margin-bottom: 30px;">
                     <span class="label-text">Disciplines (Optional)</span>
@@ -117,7 +222,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 30px;">
                     <span class="label-text">Google Maps URL *</span>
-                    <input type="url" name="maps_url" class="glass-input required-input" required>
+                    <input type="url" name="maps_url" id="form_maps_url" class="glass-input required-input" placeholder="https://maps.google.com/..." required>
                 </div>
                 <div style="display: flex; gap: 15px;">
                     <button type="button" class="btn-round btn-wa" style="flex: 1;" onclick="nextStep(1)">Back</button>
@@ -125,31 +230,23 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Submission -->
             <div class="form-step" id="step3">
-                <div class="agreement-area" style="background:#fff; padding:20px; border-radius:16px; border:1px solid var(--border-soft); font-size:0.85rem; margin-bottom:20px; height:120px; overflow-y:auto;">
-                    <p>I confirm that all provided information is accurate and I agree to the STADO International standards regarding training quality and brand integrity.</p>
-                    <ul>
-                        <li>All information provided is true and accurate.</li>
-                        <li>I will maintain the quality, discipline, safety, and training standards set by STADO.</li>
-                        <li>I will use STADO name and branding only as permitted.</li>
-                        <li>Misconduct or misuse of branding may result in termination of partnership.</li>
-                        <li>Financial terms will be defined separately after approval.</li>
-                    </ul>
-                </div>
+                <div id="formMsg"></div>
 
-                <div style="margin-bottom: 25px; display: flex; gap: 10px; align-items: center;">
-                    <input type="checkbox" id="checkAgree" style="width: 22px; height: 22px;">
-                    <label for="checkAgree" style="font-size: 0.9rem; font-weight: 600;">I agree to the terms</label>
+                <div class="mou-trigger-box">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="checkbox" id="checkAgree" style="width: 22px; height: 22px; cursor: pointer;" disabled>
+                        <label for="checkAgree" style="font-size: 0.95rem; font-weight: 600; color: #1d1d1f;">
+                            I accept the <span class="mou-link" onclick="openMouModal()">Memorandum of Understanding (MOU)</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 30px;">
                     <span class="label-text">Owner's Signature *</span>
                     <canvas id="sig-canvas"></canvas>
-                    <button type="button" onclick="clearSig()" style="background:none; border:none; color:var(--primary-blue); font-size:0.75rem; margin-top:10px; cursor:pointer;">CLEAR SIGNATURE</button>
+                    <button type="button" onclick="clearSig()" style="background:none; border:none; color:var(--primary-blue); font-size:0.75rem; margin-top:10px; cursor:pointer; font-weight: 700; letter-spacing: 0.5px;">CLEAR SIGNATURE</button>
                 </div>
-
-                <div id="formMsg"></div>
 
                 <div style="display: flex; gap: 15px;">
                     <button type="button" class="btn-round btn-wa" style="flex: 1;" onclick="nextStep(2)">Back</button>
@@ -159,12 +256,58 @@
         </form>
     </main>
 
+    <div class="mou-modal" id="mouModal">
+        <div class="mou-modal-content">
+            <div class="mou-scroll-area" id="mouScrollArea">
+                <h1>MEMORANDUM OF UNDERSTANDING (MOU)</h1>
+                <h2>FACILITY PARTNER – STADO INTERNATIONAL</h2>
+                <hr style="border: 0; border-top: 1px solid var(--border-soft); margin-bottom: 20px;">
+                
+                <p>This Memorandum of Understanding (“MOU”) is made and executed between:</p>
+                <p><strong>Stado International</strong>, represented by managing management authority (hereinafter referred to as <strong>“Stado”</strong>)</p>
+                <p><strong>AND</strong></p>
+                <p><strong>Facility Partner</strong>, <span id="mou_fill_owner" class="dynamic-fill">____________________</span>, on behalf of <span id="mou_fill_center" class="dynamic-fill">____________________</span> (hereinafter referred to as <strong>“Facility Partner”</strong>)</p>
+                <p>Both parties agree to collaborate for conducting martial arts, fitness, sports, wellness, and related programs at the Facility Partner’s premises under Stado International.</p>
+
+                <h3>1. PURPOSE OF AGREEMENT</h3>
+                <p>The purpose of this MOU is to establish a structured collaboration where the Facility Partner provides space and infrastructure, and Stado International operates training programs, events, and student development activities.</p>
+
+                <h3>2. SCOPE OF COLLABORATION</h3>
+                <p>Stado International shall conduct martial arts training programs, fitness and sports coaching, belt examinations and grading, specialized camps, workshops, internal championships, and custom student development programs. All such activities shall be conducted <strong>only within the Facility Partner’s approved premises unless otherwise agreed in writing</strong>.</p>
+
+                <h3>3. RESPONSIBILITIES OF FACILITY PARTNER</h3>
+                <p>The Facility Partner agrees to provide continuous access, safety, system handling for processing admissions, and monitor the branch social media and communication platforms seamlessly.</p>
+
+                <h3>4. RESPONSIBILITIES OF STADO INTERNATIONAL</h3>
+                <p>Stado International shall manage all trainer deployments, training curricula, grading sequences, and maintain a strict ratio of <strong>1 instructor for every 50 students</strong>.</p>
+
+                <h3>5. REVENUE & FINANCIAL STRUCTURE</h3>
+                <p>The Facility Partner receives a <span class="mou-highlight-text">20% share</span> of operational revenues (monthly fees, admission, uniform, and grading fees) generated inside the premises, distributed on the final day of every calendar month.</p>
+
+                <h3>6. TERM & TERMINATION</h3>
+                <p>Valid until terminated by operational deadlock, terms breach, or if any event falls short of a <strong>minimum of 10 students</strong>.</p>
+
+                <p style="margin-top: 25px; font-weight: 600; color: var(--primary-blue);" id="scrollNotice">👇 Please scroll to the very bottom of the document to unlock acknowledgement.</p>
+            </div>
+            <button type="button" class="mou-footer-btn" id="closeMouBtn" disabled onclick="acceptAndCloseMou()">I Have Read &amp; Understand the MOU</button>
+        </div>
+    </div>
+
     <script>
+        // --- REAL-TIME AUTO FILL SYNC ---
+        const ownerInput = document.getElementById('form_owner_name');
+        const centerInput = document.getElementById('form_center_name');
+        const mouOwnerSpan = document.getElementById('mou_fill_owner');
+        const mouCenterSpan = document.getElementById('mou_fill_center');
+
+        ownerInput.addEventListener('input', (e) => { mouOwnerSpan.innerText = e.target.value.trim() || "____________________"; });
+        centerInput.addEventListener('input', (e) => { mouCenterSpan.innerText = e.target.value.trim() || "____________________"; });
+
         // --- NAVIGATION & VALIDATION ---
         window.nextStep = function(step) {
             document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
-            const dots = document.querySelectorAll('.step-dot');
+            const dots = document.querySelectorAll('.step-dots .step-dot');
             dots.forEach((d, i) => (i < step) ? d.classList.add('active') : d.classList.remove('active'));
             if(step === 3) resizeCanvas();
             window.scrollTo(0, 0);
@@ -185,7 +328,7 @@
         validateStep('step1', 'next1');
         validateStep('step2', 'next2');
 
-        // --- SIGNATURE & DISCIPLINES ---
+        // --- CANVAS SIGNATURE ---
         let selectedProgs = [];
         const canvas = document.getElementById('sig-canvas');
         const ctx = canvas.getContext('2d');
@@ -215,7 +358,7 @@
         };
 
         const startDraw = (e) => { isDrawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); };
-        const drawing = (e) => { if(!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.stroke(); };
+        const drawing = (e) => { if(!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.strokeStyle = "#1d1d1f"; ctx.stroke(); };
         const stopDraw = () => { isDrawing = false; toggleSubmit(); };
 
         canvas.addEventListener('mousedown', startDraw);
@@ -235,19 +378,62 @@
         }
         checkAgree.addEventListener('change', toggleSubmit);
 
-        // --- SUBMISSION ---
+        // --- MOU MODAL CONTROLS ---
+        const mouModal = document.getElementById('mouModal');
+        const mouScrollArea = document.getElementById('mouScrollArea');
+        const closeMouBtn = document.getElementById('closeMouBtn');
+        const scrollNotice = document.getElementById('scrollNotice');
+
+        window.openMouModal = function() {
+            mouModal.classList.add('active');
+            if (mouScrollArea.scrollHeight <= mouScrollArea.clientHeight) {
+                closeMouBtn.disabled = false;
+                if(scrollNotice) scrollNotice.style.display = 'none';
+            }
+        }
+
+        mouScrollArea.addEventListener('scroll', () => {
+            const totalScrollableHeight = mouScrollArea.scrollHeight - mouScrollArea.clientHeight;
+            if (mouScrollArea.scrollTop >= totalScrollableHeight - 25) {
+                closeMouBtn.disabled = false;
+                if(scrollNotice) scrollNotice.style.opacity = '0';
+            }
+        });
+
+        window.acceptAndCloseMou = function() {
+            checkAgree.disabled = false;
+            checkAgree.checked = true;
+            mouModal.classList.remove('active');
+            toggleSubmit();
+        }
+
+        // --- SUBMISSION WITH EXCELLENT ERROR HANDLING ---
         document.getElementById('centerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Clear previous errors
+            const msgContainer = document.getElementById('formMsg');
+            msgContainer.innerHTML = "";
+            const mapsInput = document.getElementById('form_maps_url');
+            mapsInput.classList.remove('input-error');
+
             submitBtn.innerText = "Processing...";
             submitBtn.disabled = true;
 
             try {
                 const f = e.target;
+
+                // 1. Validate Google Maps URL structure explicitly before reaching API
+                const urlValue = f.maps_url.value.trim();
+                if(!urlValue.includes('maps.google') && !urlValue.includes('maps.app.goo') && !urlValue.includes('goo.gl/maps')) {
+                    mapsInput.classList.add('input-error');
+                    throw new Error("INVALID_MAPS_URL");
+                }
+
                 const fullAddress = `${f.address.value}, ${f.city.value}, India`;
-                
-                // GEOLOCATION (Method A)
                 let lat = null, lng = null;
-                const googleKey = "YOUR_RESTRICTED_GOOGLE_API_KEY"; // REPLACE WITH YOUR KEY
+                const googleKey = "YOUR_RESTRICTED_GOOGLE_API_KEY"; 
+                
                 try {
                     const geoRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fullAddress)}&key=${googleKey}`);
                     const geoData = await geoRes.json();
@@ -255,47 +441,100 @@
                         lat = geoData.results[0].geometry.location.lat;
                         lng = geoData.results[0].geometry.location.lng;
                     }
-                } catch(ge) { console.error("Geo error", ge); }
+                } catch(ge) { 
+                    console.warn("Geocoding non-critical bypass", ge); 
+                }
 
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
+                // Fetch Client IP Address safely
+                let clientIp = "0.0.0.0";
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    clientIp = ipData.ip;
+                } catch(ipe) { console.warn("IP fetch failed", ipe); }
 
+                // Process Canvas Signature File Conversion
                 const blob = await new Promise(res => canvas.toBlob(res));
+                if (!blob || blob.size < 200) {
+                    throw new Error("EMPTY_SIGNATURE");
+                }
+                
                 const fileName = `sig_${Date.now()}.png`;
-                await window.supabaseClient.storage.from('center-signatures').upload(`signatures/${fileName}`, blob);
+                
+                // Upload signature asset to Storage bucket
+                const { error: uploadError } = await window.supabaseClient.storage
+                    .from('center-signatures')
+                    .upload(`signatures/${fileName}`, blob);
+                
+                if (uploadError) throw new Error(`STORAGE_UPLOAD_ERROR: ${uploadError.message}`);
+
                 const { data: { publicUrl } } = window.supabaseClient.storage.from('center-signatures').getPublicUrl(`signatures/${fileName}`);
 
+                // Write core submission tuple to Database
                 const { error: insErr } = await window.supabaseClient.from('center_applications').insert([{
                     owner_name: f.owner_name.value,
                     name: f.center_name.value,
                     email: f.email.value,
                     contact_phone: f.phone.value,
+                    alternative_phone: f.alternative_phone.value || null, // MAPS PERFECTLY TO DB
                     city: f.city.value,
                     address: f.address.value,
                     google_maps_url: f.maps_url.value,
                     disciplines: selectedProgs,
                     latitude: lat,
                     longitude: lng,
-                    ip_address: ipData.ip,
+                    ip_address: clientIp,
                     user_agent: navigator.userAgent,
                     signature_url: publicUrl,
                     agreement_accepted_at: new Date().toISOString(),
                     status: 'pending'
                 }]);
 
-                if(insErr) throw insErr;
+                if(insErr) {
+                    if (insErr.code === "23505") throw new Error("DUPLICATE_ENTRY");
+                    throw insErr;
+                }
+
+                // Render Success Layout State
                 document.querySelector('.apply-wrapper').innerHTML = `
                     <div style="text-align:center; padding: 60px 20px;">
-                        <h2 style="color:#25D366;">Application Submitted!</h2>
-                        <p>Our team will review your application and contact you shortly.</p>
-                        <a href="/" class="btn-round btn-premium" style="display:inline-block; margin-top:20px; background:var(--primary-blue); color:#fff;">Back to Home</a>
+                        <h2 style="color:#25D366; font-family:'Oswald', sans-serif; font-size: 2rem;">Application Submitted!</h2>
+                        <p style="margin-top: 10px; color: #6e6e73;">Our team will review your application and contact you shortly.</p>
+                        <a href="/" class="btn-round btn-premium" style="display:inline-block; margin-top:30px; background:var(--primary-blue); color:#fff; text-decoration:none; padding:16px 32px; border-radius:14px; font-weight:600;">Back to Home</a>
                     </div>
                 `;
+
             } catch (err) {
-                console.error(err);
-                document.getElementById('formMsg').innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+                console.error("Submission Failure Handled:", err.message);
+                
+                let humanFriendlyMessage = "An unexpected error occurred. Please try again.";
+                
+                // Switch statement matching custom runtime states & DB flags
+                if (err.message === "INVALID_MAPS_URL") {
+                    humanFriendlyMessage = "⚠️ The Google Maps URL you entered is invalid. Please copy a correct link from Google Maps on Step 2.";
+                    nextStep(2); // Automatically bounce back to correct step to fix it
+                } else if (err.message === "EMPTY_SIGNATURE") {
+                    humanFriendlyMessage = "⚠️ Signature pad data error. Please re-draw your signature below.";
+                } else if (err.message === "DUPLICATE_ENTRY") {
+                    humanFriendlyMessage = "⚠️ An application with this Email or Center name has already been registered.";
+                } else if (err.message.includes("Failed to fetch")) {
+                    humanFriendlyMessage = "📡 Network connection problem detected. Please verify your internet and try again.";
+                } else if (err.message.includes("STORAGE_UPLOAD_ERROR")) {
+                    humanFriendlyMessage = "☁️ File upload server error processing signature. Please retry.";
+                } else {
+                    humanFriendlyMessage = `⚠️ Database Error: ${err.message}`;
+                }
+
+                // Inject Custom Red Banner above actions
+                msgContainer.innerHTML = `
+                    <div class="error-banner">
+                        <span>${humanFriendlyMessage}</span>
+                    </div>
+                `;
+                
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Submit Application";
+                window.scrollTo(0, 0);
             }
         });
     </script>
