@@ -145,6 +145,20 @@
         .payment-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .payment-total { font-size: 1.4rem; font-weight: 700; color: #fff; font-family: var(--font-heading); }
 
+        /* FALLBACK UPI COPY BOX */
+        .payment-fallback {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .payment-fallback p { font-size: 0.8rem; color: var(--text-grey); margin-bottom: 8px; }
+        .upi-id-badge { display: inline-block; background: #222; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; border: 1px solid #444; margin-bottom: 10px; color: #fff; }
+        .copy-btn { background: transparent; border: 1px solid var(--primary-red); color: var(--primary-red); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: var(--transition); }
+        .copy-btn:hover { background: var(--primary-red); color: #fff; }
+
         /* Verification Panel Area */
         .verification-panel {
             display: none;
@@ -228,7 +242,6 @@
 
         <div class="admission-card">
             <form id="admissionForm">
-                <!-- Main Fields Wrapper -->
                 <div class="form-grid" id="mainFormFields">
                     <div class="form-group">
                         <label>Selected Centre</label>
@@ -306,15 +319,21 @@
                     <div class="payment-box">
                         <div class="payment-row">
                             <span style="font-weight: 600; color: var(--text-grey);">Admission Processing Fee</span>
-                            <span class="payment-total">₹1.00</span>
+                            <span class="payment-total">₹500.00</span>
                         </div>
                         <p style="font-size: 0.7rem; color: var(--text-grey); margin-top: 10px; line-height: 1.4;">
-                            Note: Your admission details are secured. Press the button below to initiate your direct smartphone UPI application context layout.
+                            Note: Your admission details are secured. Press the button below to initiate payment on your smartphone's UPI apps.
                         </p>
+
+                        <div class="payment-fallback">
+                            <p>If apps fail to open or prompt an error, pay manually to this business VPA:</p>
+                            <div class="upi-id-badge" id="fallbackUpiId">stado7043qr@fbl</div>
+                            <br>
+                            <button type="button" class="copy-btn" id="copyUpiBtn">Copy UPI ID</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- NEW: Dynamic Transaction ID Prompt Area -->
                 <div class="verification-panel" id="verificationPanel">
                     <h3>Confirm UPI Transaction</h3>
                     <p style="font-size: 0.85rem; color: var(--text-grey); margin-bottom: 20px; line-height: 1.5;">
@@ -349,6 +368,7 @@
             const loadingText = document.getElementById('loadingText');
             const dobInput = document.getElementById('dob');
             const applicantType = document.getElementById('applicant_type');
+            const copyUpiBtn = document.getElementById('copyUpiBtn');
 
             // Internal flow control flags
             let currentFlowStep = "PAYMENT_INITIATION"; 
@@ -378,9 +398,25 @@
                 document.getElementById('pro_group').style.display = (this.value === 'Working Professional') ? 'flex' : 'none';
             });
 
+            // Fallback Copy Button Event Action
+            copyUpiBtn.addEventListener('click', () => {
+                const upiString = document.getElementById('fallbackUpiId').innerText;
+                navigator.clipboard.writeText(upiString).then(() => {
+                    copyUpiBtn.innerText = "Copied!";
+                    copyUpiBtn.style.borderColor = "var(--success-green)";
+                    copyUpiBtn.style.color = "var(--success-green)";
+                    setTimeout(() => {
+                        copyUpiBtn.innerText = "Copy UPI ID";
+                        copyUpiBtn.style.borderColor = "var(--primary-red)";
+                        copyUpiBtn.style.color = "var(--primary-red)";
+                    }, 2000);
+                }).catch(err => {
+                    alert("Failed to copy string context: " + err);
+                });
+            });
+
             // Input parsing to allow strictly numbers and exact 12 digit threshold checks
             userTxnInput.addEventListener('input', function() {
-                // Filter character inputs keeping digits only
                 this.value = this.value.replace(/\D/g, '');
                 
                 if (this.value.length === 12) {
@@ -402,30 +438,31 @@
                 
                 if (currentFlowStep === "PAYMENT_INITIATION") {
                     // STEP 1: Launch Payment Routing
-                    alert("ATTENTION:\n\n1. Select your preferred UPI application on the next system prompt.\n2. Please note your transaction reference number inside your banking statement/history once complete.\n3. Return to this browser tab to input your transaction reference ID.");
+                    alert("ATTENTION:\n\n1. Select your preferred UPI application on the next system prompt.\n2. Please complete the transaction and note your 12-digit UTR/Ref ID from your bank statement.\n3. Return back to this screen to verify your transaction.");
                     
                     submitBtn.disabled = true;
                     overlay.style.display = 'flex';
                     loadingText.innerText = "Configuring secure UPI connection...";
 
-                    // Generate a random reference token for logging before sending user away
-                    systemRefOrderMarker = "STADO-" + Math.floor(100000 + Math.random() * 900000);
+                    // Standard clean timestamped reference marker code
+                    systemRefOrderMarker = "STADO" + Date.now();
 
-                    // Configure explicit deep link configurations
-                    const upiId = "stado7043qr@fbl"; // !!! REPLACE WITH YOUR REAL BUSINESS UPI HANDLE 
-                    const payeeName = encodeURIComponent("STADO International");
-                    const amount = "1.00";
-                    const transactionNote = encodeURIComponent(`Ref:${systemRefOrderMarker}`);
+                    // Standard streamlined parameters without custom string values to pass strict bank firewalls
+                    const upiId = "stado7043qr@fbl"; 
+                    const payeeName = encodeURIComponent("STADO");
+                    const amount = "500.00";
                     
-                    const upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${transactionNote}`;
+                    // Standard compliance layout scheme
+                    const upiUrl = `upi://pay?pa=${upiId}&pn=${payeeName}&tr=${systemRefOrderMarker}&am=${amount}&cu=INR`;
 
-                    // Redirect the window context straight out to internal device handler schemes
+                    // Trigger direct application link mapping context seamlessly
                     window.location.href = upiUrl;
 
-                    // Small delay context before toggling input screen structures for when they route backwards
+                    // Fallback state change trigger timeout delay
                     setTimeout(() => {
                         overlay.style.display = 'none';
                         mainFormFields.style.opacity = "0.2";
+                        
                         // Prevent tweaking basic values during intermediate registration states
                         Array.from(mainFormFields.getElementsByTagName('input')).forEach(el => el.disabled = true);
                         Array.from(mainFormFields.getElementsByTagName('select')).forEach(el => el.disabled = true);
@@ -439,7 +476,7 @@
                         
                         // Scroll nicely down towards verification layouts
                         verificationPanel.scrollIntoView({ behavior: 'smooth' });
-                    }, 1000);
+                    }, 1200);
 
                 } else if (currentFlowStep === "DATABASE_COMMIT") {
                     // STEP 2: Handle database save after verifying string bounds
@@ -469,10 +506,9 @@
                             occupation: document.getElementById('occupation')?.value || null,
                             application_year: new Date().getFullYear(),
                             
-                            // Database explicit schemas mapping
                             status: 'Pending Verification',
                             razorpay_order_id: 'UPI_INTENT_FLOW',
-                            payment_id: userTxnInput.value.trim() // Logging user's provided 12-digit UTR straight into payment_id field
+                            payment_id: userTxnInput.value.trim() 
                         };
 
                         // Send straight to Supabase
