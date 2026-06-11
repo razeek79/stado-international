@@ -74,7 +74,6 @@
             border-radius: 32px;
             padding: clamp(25px, 5vw, 50px);
             width: 100%;
-            position: relative;
         }
 
         .header-section { text-align: center; margin-bottom: 40px; }
@@ -114,40 +113,6 @@
 
         .form-control:focus { border-color: var(--primary-red); outline: none; background: #161616; box-shadow: 0 0 0 4px rgba(165, 28, 48, 0.1); }
         .form-control[readonly] { background: rgba(165, 28, 48, 0.05); color: var(--primary-red); cursor: not-allowed; border-color: rgba(165, 28, 48, 0.2); }
-
-        /* File Upload Styling */
-        .file-upload-wrapper {
-            position: relative;
-            margin-top: 15px;
-        }
-        .file-input-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: #1a1a1a;
-            border: 2px dashed #333;
-            padding: 15px;
-            border-radius: 14px;
-            cursor: pointer;
-            color: var(--text-grey);
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-        .file-input-label:hover {
-            border-color: var(--alert-blue);
-            color: #fff;
-            background: rgba(41, 121, 255, 0.02);
-        }
-        #screenshot_file { display: none; }
-        .file-selected-name {
-            font-size: 0.75rem;
-            color: var(--success-green);
-            margin-top: 5px;
-            display: none;
-            font-weight: 600;
-        }
 
         .form-section-title {
             grid-column: span 2;
@@ -232,90 +197,6 @@
             letter-spacing: 1px;
         }
 
-        /* PREMIUM APP SCREEN SUCCESS DESIGNS */
-        .success-panel {
-            display: none;
-            text-align: center;
-            padding: 20px 10px;
-            animation: scaleInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        .success-icon-wrap {
-            width: 80px;
-            height: 80px;
-            background: rgba(0, 230, 118, 0.1);
-            border: 2px solid var(--success-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 0 0 30px rgba(0, 230, 118, 0.2);
-        }
-
-        .success-icon-wrap svg {
-            width: 40px;
-            height: 40px;
-            fill: none;
-            stroke: var(--success-green);
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .success-panel h2 {
-            font-family: var(--font-heading);
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .success-subtitle {
-            color: var(--success-green);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-        }
-
-        .success-details-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 25px;
-            max-width: 500px;
-            margin: 0 auto 35px;
-            text-align: left;
-        }
-
-        .success-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 12px 0;
-        }
-        .success-row:last-child { border-bottom: none; }
-        .success-label { color: var(--text-grey); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .success-value { color: #fff; font-weight: 600; font-size: 0.95rem; }
-
-        .redirect-notice {
-            font-size: 0.8rem;
-            color: var(--text-grey);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        #countdownSec { color: var(--primary-red); font-weight: 700; }
-
-        @keyframes scaleInUp {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
         /* Button styling */
         .submit-btn {
             background: var(--primary-red);
@@ -372,7 +253,7 @@
     </header>
 
     <main class="admission-container">
-        <div class="header-section" id="portalHeader">
+        <div class="header-section">
             <h1>Admission</h1>
             <p id="subHeading">Initiating your path to excellence</p>
         </div>
@@ -480,60 +361,16 @@
 
                     <div class="form-group">
                         <p style="font-size: 0.85rem; color: var(--text-grey); margin-bottom: 15px; line-height: 1.5;">
-                            <strong style="color: #fff;">Step 2:</strong> Enter your transaction details and upload a payment receipt screenshot to finalize verification.
+                            <strong style="color: #fff;">Step 2:</strong> Check your payment app history, look for the successful payment receipt, and paste the exact <strong>12-digit Ref No. / UTR / Transaction ID</strong> below to confirm.
                         </p>
-                        
                         <label>Enter 12-Digit Transaction ID / UTR *</label>
                         <input type="text" id="user_txn_id" class="form-control" maxlength="12" placeholder="e.g., 349120485921" autocomplete="off">
                         <span id="validationHint" style="font-size: 0.7rem; color: var(--primary-red); margin-top: 5px; font-weight: 600;"></span>
-                        
-                        <div class="file-upload-wrapper">
-                            <label>Upload Payment Screenshot *</label>
-                            <label for="screenshot_file" class="file-input-label" id="fileLabel">
-                                📁 Choose Screenshot Image
-                            </label>
-                            <input type="file" id="screenshot_file" accept="image/*">
-                            <div class="file-selected-name" id="fileNameDisplay">No file chosen</div>
-                        </div>
                     </div>
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">Proceed to Pay Via UPI</button>
             </form>
-
-            <div class="success-panel" id="successPanel">
-                <div class="success-icon-wrap">
-                    <svg viewBox="0 0 24 24">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                </div>
-                <h2>Applied Successfully</h2>
-                <div class="success-subtitle">Registration Record Secured</div>
-                
-                <div class="success-details-card">
-                    <div class="success-row">
-                        <span class="success-label">Applicant Name</span>
-                        <span class="success-value" id="resName">-</span>
-                    </div>
-                    <div class="success-row">
-                        <span class="success-label">Program & Center</span>
-                        <span class="success-value" id="resProgram">-</span>
-                    </div>
-                    <div class="success-row">
-                        <span class="success-label">Transaction ID / UTR</span>
-                        <span class="success-value" id="resTxn" style="font-family:monospace; font-size:1.05rem;">-</span>
-                    </div>
-                    <div class="success-row">
-                        <span class="success-label">Verification Status</span>
-                        <span class="success-value" style="color: #FFC107;">Pending Verification</span>
-                    </div>
-                </div>
-
-                <div class="redirect-notice">
-                    Returning to homepage in <span id="countdownSec">5</span> seconds...
-                </div>
-            </div>
-
         </div>
     </main>
 
@@ -548,12 +385,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const mainFormFields = document.getElementById('mainFormFields');
             const verificationPanel = document.getElementById('verificationPanel');
-            const successPanel = document.getElementById('successPanel');
-            const portalHeader = document.getElementById('portalHeader');
             const userTxnInput = document.getElementById('user_txn_id');
-            const fileInput = document.getElementById('screenshot_file');
-            const fileLabel = document.getElementById('fileLabel');
-            const fileNameDisplay = document.getElementById('fileNameDisplay');
             const validationHint = document.getElementById('validationHint');
             const overlay = document.getElementById('loading-overlay');
             const loadingText = document.getElementById('loadingText');
@@ -562,6 +394,7 @@
             const copyBtn = document.getElementById('copyBtn');
             const merchantNumberDisplay = document.getElementById('merchantNumberDisplay');
 
+            // Internal flow control state configuration
             let currentFlowStep = "PAYMENT_INITIATION"; 
 
             // !!! REPLACE THIS WITH YOUR REAL ACCOUNT TRANSFER PHONE NUMBER
@@ -606,155 +439,88 @@
                 });
             });
 
-            // UI feedback handler when file gets picked up
-            fileInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    fileNameDisplay.innerText = "📸 Selected: " + this.files[0].name;
-                    fileNameDisplay.style.display = "block";
-                    fileLabel.style.borderColor = "var(--success-green)";
-                    fileLabel.style.background = "rgba(0, 230, 118, 0.02)";
-                    checkFormCompleteness();
-                }
-            });
-
-            // Input parsing to check 12 digit format metrics
+            // Input parsing to enforce strictly numbers and exact 12-digit bounds
             userTxnInput.addEventListener('input', function() {
                 this.value = this.value.replace(/\D/g, '');
-                checkFormCompleteness();
-            });
-
-            function checkFormCompleteness() {
-                const isIdValid = userTxnInput.value.length === 12;
-                const isFileUploaded = fileInput.files && fileInput.files[0];
-
-                if (isIdValid) {
-                    validationHint.innerText = "✓ UTR Format Valid.";
+                
+                if (this.value.length === 12) {
+                    validationHint.innerText = "✓ Valid format. Ready to finalize.";
                     validationHint.style.color = "var(--success-green)";
-                } else {
-                    validationHint.innerText = `Requires 12 digits (Entered: ${userTxnInput.value.length})`;
-                    validationHint.style.color = "var(--primary-red)";
-                }
-
-                if (isIdValid && isFileUploaded) {
                     submitBtn.disabled = false;
                     submitBtn.classList.add('bright');
                 } else {
+                    validationHint.innerText = `Requires 12 digits (Entered: ${this.value.length})`;
+                    validationHint.style.color = "var(--primary-red)";
                     submitBtn.disabled = true;
                     submitBtn.classList.remove('bright');
                 }
-            }
+            });
 
-            // Master Execution Pipeline Switcher Engine
+            // Master execution wrapper handling state switching routing behaviors
             admissionForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 if (currentFlowStep === "PAYMENT_INITIATION") {
-                    // Freeze inputs
+                    alert(`INSTRUCTIONS:\n\n1. Copy the displayed phone number: ${STADO_PAYMENT_NUMBER}\n2. Open Google Pay, PhonePe, Paytm or any UPI App.\n3. Pay exactly ₹500 to this number.\n4. Copy the 12-digit UTR/Transaction ID from your app payment history and return here.`);
+                    
+                    // Freeze values to avoid field tampering midway
                     Array.from(mainFormFields.getElementsByTagName('input')).forEach(el => el.disabled = true);
                     Array.from(mainFormFields.getElementsByTagName('select')).forEach(el => el.disabled = true);
                     Array.from(mainFormFields.getElementsByTagName('textarea')).forEach(el => el.disabled = true);
                     
                     mainFormFields.style.opacity = "0.2";
                     
+                    // Surface instructions & validation elements
                     verificationPanel.style.display = 'block';
                     verificationPanel.scrollIntoView({ behavior: 'smooth' });
                     
                     submitBtn.innerText = "Complete Registration";
-                    submitBtn.disabled = true; 
+                    submitBtn.disabled = true; // Kept locked until exactly 12 digits are typed
                     currentFlowStep = "DATABASE_COMMIT";
 
                 } else if (currentFlowStep === "DATABASE_COMMIT") {
-                    if (userTxnInput.value.length !== 12 || !fileInput.files[0]) {
-                        alert("Please provide both transaction parameters: UTR ID and Screenshot.");
+                    if (userTxnInput.value.length !== 12) {
+                        alert("Please provide a valid 12-digit transaction UTR Reference ID.");
                         return;
                     }
 
                     submitBtn.disabled = true;
                     submitBtn.classList.remove('bright');
                     overlay.style.display = 'flex';
-                    loadingText.innerText = "Uploading payment proof to asset storage...";
+                    loadingText.innerText = "Publishing registration credentials...";
 
                     try {
-                        const screenshotFile = fileInput.files[0];
-                        const fileExtension = screenshotFile.name.split('.').pop();
-                        const uniqueFileName = `${Date.now()}-${userTxnInput.value}.${fileExtension}`;
-                        
-                        // 1. Upload screenshot file to Supabase Storage
-                        const { data: storageData, error: storageErr } = await window.supabaseClient
-                            .storage
-                            .from('payment-proofs')
-                            .upload(uniqueFileName, screenshotFile);
-
-                        if (storageErr) throw new Error("Storage Upload Failure: " + storageErr.message);
-
-                        // 2. Extract public tracking URL link address
-                        const { data: publicUrlData } = window.supabaseClient
-                            .storage
-                            .from('payment-proofs')
-                            .getPublicUrl(uniqueFileName);
-
-                        const publicScreenshotUrl = publicUrlData.publicUrl;
-
-                        loadingText.innerText = "Publishing registration credentials...";
-
-                        const nameVal = document.getElementById('full_name').value.trim();
-                        const activityVal = document.getElementById('preferred_activity').value;
-                        const centerVal = document.getElementById('preferred_center').value;
-                        const txnIdVal = userTxnInput.value.trim();
-
                         const admissionPayload = {
-                            full_name: nameVal,
+                            full_name: document.getElementById('full_name').value.trim(),
                             gender: document.getElementById('gender').value,
                             dob: dobInput.value,
                             phone: document.getElementById('phone').value.trim(),
                             email: document.getElementById('email').value.trim(),
                             address: document.getElementById('address').value.trim(),
                             applicant_type: applicantType.value,
-                            preferred_center: centerVal,
-                            preferred_activity: activityVal,
+                            preferred_center: document.getElementById('preferred_center').value,
+                            preferred_activity: document.getElementById('preferred_activity').value,
                             guardian_name: document.getElementById('guardian_name')?.value || null,
                             standard: document.getElementById('standard')?.value || null,
                             occupation: document.getElementById('occupation')?.value || null,
                             application_year: new Date().getFullYear(),
                             
+                            // Map cleanly into your existing structural database layout columns
                             status: 'Pending Verification',
                             razorpay_order_id: 'DIRECT_PHONE_TRANSFER',
-                            payment_id: txnIdVal,
-                            razorpay_signature: publicScreenshotUrl 
+                            payment_id: userTxnInput.value.trim() 
                         };
 
-                        // 3. Commit row insertion down into PostgreSQL schema
+                        // Send payload straight to Supabase
                         const { error: dbErr } = await window.supabaseClient
                             .from('admissions')
                             .insert([admissionPayload]);
 
                         if (dbErr) throw new Error(dbErr.message);
 
-                        // SUCCESS TRANSITION FLOW (Replaces native alert method completely)
                         overlay.style.display = 'none';
-                        admissionForm.style.display = 'none';
-                        portalHeader.style.display = 'none';
-                        
-                        // Bind parameters into final dynamic success UI fields
-                        document.getElementById('resName').innerText = nameVal;
-                        document.getElementById('resProgram').innerText = `${activityVal} (@ ${centerVal})`;
-                        document.getElementById('resTxn').innerText = txnIdVal;
-                        
-                        // Reveal Success Panel UI layout smoothly
-                        successPanel.style.display = 'block';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                        // Run non-blocking automatic redirect countdown framework
-                        let remainingSeconds = 5;
-                        const countdownElement = document.getElementById('countdownSec');
-                        const countdownInterval = setInterval(() => {
-                            remainingSeconds--;
-                            countdownElement.innerText = remainingSeconds;
-                            if (remainingSeconds <= 0) {
-                                clearInterval(countdownInterval);
-                                window.location.href = "../index.html";
-                            }
-                        }, 1000);
+                        alert("Application Submitted Successfully! Stored status flag under: Pending Verification.");
+                        window.location.href = "../index.html";
 
                     } catch (err) {
                         overlay.style.display = 'none';
